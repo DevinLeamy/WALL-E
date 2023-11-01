@@ -3,5 +3,9 @@ name = "wall-e-script"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "wall_e_script"
+crate-type = ["cdylib"]
+
 [dependencies]
-wall-e = { path = "../wall-e" }
+pyo3 = "0.19.0"
