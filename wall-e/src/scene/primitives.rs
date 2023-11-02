@@ -1,5 +1,6 @@
 use super::Collidable;
 
+#[derive(Clone)]
 pub struct Sphere {
     radius: f32,
 }
@@ -12,6 +13,7 @@ impl Sphere {
 
 impl Collidable for Sphere {}
 
+#[derive(Clone)]
 pub struct Cube {
     size: f32,
 }

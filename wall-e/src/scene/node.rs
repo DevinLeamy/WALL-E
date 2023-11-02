@@ -50,7 +50,7 @@ pub struct Geometry {
     transform: Transform,
     children: Vec<Node>,
     material: PhongMaterial,
-    // primitive: Box<dyn Collidable>,
+    primitive: Box<dyn Collidable>,
 }
 
 impl Geometry {
@@ -59,7 +59,7 @@ impl Geometry {
             transform: Transform::default(),
             children: Vec::new(),
             material: PhongMaterial::default(),
-            // primitive: Box::new(Sphere::new(1.0)),
+            primitive: Box::new(Sphere::new(1.0)),
         }
     }
 
@@ -68,7 +68,7 @@ impl Geometry {
             transform: Transform::default(),
             children: Vec::new(),
             material: PhongMaterial::default(),
-            // primitive,
+            primitive,
         }
     }
 

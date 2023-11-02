@@ -3,7 +3,6 @@ use pyo3::prelude::*;
 use pyo3::types::PyString;
 use pyo3::wrap_pyfunction;
 
-// Import your Rust structures here
 use wall_e::prelude::{Geometry, Light, Node, Scene, Transformation};
 
 #[pyclass]
@@ -51,9 +50,6 @@ struct PyGeometry {
 impl PyGeometry {
     #[new]
     fn new(primitive_type: &str) -> PyResult<Self> {
-        // You should implement a function to create a geometry based on a string.
-        // For example, "sphere" should return a Geometry with a Sphere primitive.
-        // let inner = Geometry::from_primitive(/* ... */);
         let inner = Geometry::new();
         Ok(Self { inner })
     }
