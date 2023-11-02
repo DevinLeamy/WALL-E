@@ -1,5 +1,6 @@
 use nalgebra::Vector3;
 
+#[derive(Clone)]
 pub struct Transform {
     rotation: Vector3<f32>,
     translation: Vector3<f32>,

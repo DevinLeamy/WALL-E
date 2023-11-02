@@ -12,4 +12,14 @@ impl Scene {
     }
 }
 
+impl Scene {
+    pub fn root(&self) -> &Node {
+        &self.root
+    }
+
+    pub fn root_mut(&mut self) -> &mut Node {
+        &mut self.root
+    }
+}
+
 impl Scene {}

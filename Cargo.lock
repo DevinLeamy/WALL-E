@@ -601,10 +601,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "wall-e-script"
+name = "wall-e-py"
 version = "0.1.0"
 dependencies = [
+ "nalgebra",
  "pyo3",
+ "wall-e",
 ]
 
 [[package]]

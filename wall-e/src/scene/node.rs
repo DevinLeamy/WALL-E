@@ -1,7 +1,8 @@
 use nalgebra::Vector3;
 
-use super::Transform;
+use super::{Collidable, PhongMaterial, Sphere, Transform};
 
+#[derive(Clone)]
 pub enum Node {
     Light(Light),
     Geometry(Geometry),
@@ -29,9 +30,9 @@ impl Node {
 impl Node {
     fn transform_mut(&mut self) -> &mut Transform {
         match self {
-            Node::Light(light) => &mut light.transform,
-            Node::Geometry(geometry) => &mut geometry.transform,
-            Node::Transformation(transformation) => &mut transformation.transform,
+            Node::Light(light) => light.transform_mut(),
+            Node::Geometry(geometry) => geometry.transform_mut(),
+            Node::Transformation(transformation) => transformation.transform_mut(),
         }
     }
 
@@ -44,9 +45,12 @@ impl Node {
     }
 }
 
+#[derive(Clone)]
 pub struct Geometry {
     transform: Transform,
     children: Vec<Node>,
+    material: PhongMaterial,
+    // primitive: Box<dyn Collidable>,
 }
 
 impl Geometry {
@@ -54,7 +58,32 @@ impl Geometry {
         Self {
             transform: Transform::default(),
             children: Vec::new(),
+            material: PhongMaterial::default(),
+            // primitive: Box::new(Sphere::new(1.0)),
         }
+    }
+
+    pub fn from_primitive(primitive: Box<dyn Collidable>) -> Self {
+        Self {
+            transform: Transform::default(),
+            children: Vec::new(),
+            material: PhongMaterial::default(),
+            // primitive,
+        }
+    }
+
+    pub fn transform(&self) -> &Transform {
+        &self.transform
+    }
+
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        &mut self.transform
+    }
+}
+
+impl Geometry {
+    pub fn set_material(&mut self, material: PhongMaterial) {
+        self.material = material;
     }
 }
 
@@ -64,6 +93,7 @@ impl Into<Node> for Geometry {
     }
 }
 
+#[derive(Clone)]
 pub struct Light {
     transform: Transform,
     children: Vec<Node>,
@@ -76,6 +106,14 @@ impl Light {
             children: Vec::new(),
         }
     }
+
+    pub fn transform(&self) -> &Transform {
+        &self.transform
+    }
+
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        &mut self.transform
+    }
 }
 
 impl Into<Node> for Light {
@@ -84,6 +122,7 @@ impl Into<Node> for Light {
     }
 }
 
+#[derive(Clone)]
 pub struct Transformation {
     transform: Transform,
     children: Vec<Node>,
@@ -95,6 +134,14 @@ impl Transformation {
             transform: Transform::default(),
             children: Vec::new(),
         }
+    }
+
+    pub fn transform(&self) -> &Transform {
+        &self.transform
+    }
+
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        &mut self.transform
     }
 }
 

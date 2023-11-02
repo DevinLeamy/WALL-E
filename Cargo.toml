@@ -1,5 +1,5 @@
 [workspace]
 members = [
     "wall-e",
-    "wall-e-script"
+    "wall-e-py"
 ]
