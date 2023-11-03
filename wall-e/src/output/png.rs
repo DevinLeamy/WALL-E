@@ -8,6 +8,7 @@ use super::Buffer;
 /// PNG image. Each pixel in the image is an rgb vector
 /// in the range [0, 1]. Value are indexed (x, y) where
 /// x goes left to right and y goes top to bottom.
+#[derive(Clone)]
 pub struct PngImage {
     width: u32,
     height: u32,

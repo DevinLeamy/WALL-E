@@ -1,5 +1,6 @@
 use super::{Node, Transformation};
 
+#[derive(Clone)]
 pub struct Scene {
     root: Node,
 }

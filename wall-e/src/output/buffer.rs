@@ -1,4 +1,4 @@
-pub trait Buffer {
+pub trait Buffer: Clone {
     type Value;
 
     fn width(&self) -> u32;

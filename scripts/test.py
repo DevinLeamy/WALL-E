@@ -1,11 +1,5 @@
-from wall_e_py import Scene, Transform, Geometry, Light
+from wall_e_py import Scene, Transform, Geometry, Light, ray_trace, Camera
 
-"""
-scene = Scene()
-root = Transformation()
-sphere = Geometry("sphere")
-sphere.add_child(")
-"""
 scene = Scene()
 
 root = Transform() 
@@ -25,4 +19,6 @@ root.add_child(light)
 
 scene.set_root(root)
 
-print("DONE")
+camera = Camera((0, 0, 800), (0, 0, -1), (0, 1, 0), 50)
+
+ray_trace(scene, camera, 500, 500, "image.png")

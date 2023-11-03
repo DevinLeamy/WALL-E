@@ -1,7 +1,7 @@
 use nalgebra::Vector3;
 use pyo3::prelude::*;
 
-use wall_e::prelude::{Geometry, Light, Node, Scene, Transformation};
+use wall_e::prelude::{Camera, Geometry, Light, Node, PngImage, RayTracer, Scene, Transformation};
 
 #[pyclass]
 #[pyo3(name = "Node")]
@@ -167,11 +167,76 @@ impl PyScene {
     }
 }
 
+#[pyclass]
+#[pyo3(name = "Camera")]
+struct PyCamera {
+    inner: Camera,
+}
+
+#[pymethods]
+impl PyCamera {
+    #[new]
+    fn new(
+        position: (f32, f32, f32),
+        view: (f32, f32, f32),
+        up: (f32, f32, f32),
+        fov: f32,
+    ) -> Self {
+        Self {
+            inner: Camera::new(
+                Vector3::new(position.0, position.1, position.2),
+                fov,
+                Vector3::new(up.0, up.1, up.2),
+                Vector3::new(view.0, view.1, view.2),
+            ),
+        }
+    }
+
+    fn set_fov(&mut self, fov: f32) {
+        self.inner.set_fov(fov);
+    }
+
+    fn set_up(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.set_up(Vector3::new(x, y, z));
+    }
+
+    fn set_view(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.set_target(Vector3::new(x, y, z));
+    }
+
+    fn set_position(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.set_position(Vector3::new(x, y, z));
+    }
+}
+
+#[pyfunction]
+fn ray_trace(
+    scene: &PyScene,
+    camera: &PyCamera,
+    width: u32,
+    height: u32,
+    path: String,
+) -> PyResult<()> {
+    let mut tracer = RayTracer::new(
+        PngImage::new(width, height),
+        scene.inner.clone(),
+        camera.inner.clone(),
+    );
+    let output = tracer.run();
+
+    output.save(path);
+
+    Ok(())
+}
+
 #[pymodule]
 fn wall_e_py(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PyGeometry>()?;
     m.add_class::<PyScene>()?;
     m.add_class::<PyLight>()?;
     m.add_class::<PyTransform>()?;
+    m.add_class::<PyCamera>()?;
+    m.add_function(wrap_pyfunction!(ray_trace, m)?)?;
+
     Ok(())
 }
