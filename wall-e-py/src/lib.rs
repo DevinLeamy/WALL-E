@@ -38,7 +38,7 @@ impl PyGeometry {
     fn new(primitive_type: &str) -> PyResult<Self> {
         // TODO: Convert the primitive type into an actual primitive.
         Ok(Self {
-            inner: Geometry::new(),
+            inner: Geometry::default(),
         })
     }
 
@@ -80,7 +80,7 @@ impl PyLight {
     #[new]
     fn new() -> PyResult<Self> {
         Ok(Self {
-            inner: Light::new(),
+            inner: Light::default(),
         })
     }
 

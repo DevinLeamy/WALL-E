@@ -28,6 +28,22 @@ impl Node {
 }
 
 impl Node {
+    pub fn transform(&self) -> &Transform {
+        match self {
+            Node::Light(light) => light.transform(),
+            Node::Geometry(geometry) => geometry.transform(),
+            Node::Transformation(transformation) => transformation.transform(),
+        }
+    }
+
+    pub fn children(&self) -> &Vec<Node> {
+        match self {
+            Node::Light(light) => &light.children,
+            Node::Geometry(geometry) => &geometry.children,
+            Node::Transformation(transformation) => &transformation.children,
+        }
+    }
+
     fn transform_mut(&mut self) -> &mut Transform {
         match self {
             Node::Light(light) => light.transform_mut(),
@@ -53,13 +69,29 @@ pub struct Geometry {
     primitive: Box<dyn Collidable>,
 }
 
-impl Geometry {
-    pub fn new() -> Self {
+impl Default for Geometry {
+    fn default() -> Self {
         Self {
             transform: Transform::default(),
             children: Vec::new(),
             material: PhongMaterial::default(),
             primitive: Box::new(Sphere::new(1.0)),
+        }
+    }
+}
+
+impl Geometry {
+    pub fn new(
+        transform: Transform,
+        material: PhongMaterial,
+        primitive: Box<dyn Collidable>,
+        children: Vec<Node>,
+    ) -> Self {
+        Self {
+            transform,
+            children,
+            material,
+            primitive,
         }
     }
 
@@ -76,6 +108,10 @@ impl Geometry {
         &self.transform
     }
 
+    pub fn children(&self) -> &Vec<Node> {
+        &self.children
+    }
+
     pub fn transform_mut(&mut self) -> &mut Transform {
         &mut self.transform
     }
@@ -86,6 +122,14 @@ impl Geometry {
 
     pub fn set_material(&mut self, material: PhongMaterial) {
         self.material = material;
+    }
+
+    pub fn primitive(&self) -> &Box<dyn Collidable> {
+        &self.primitive
+    }
+
+    pub fn material(&self) -> &PhongMaterial {
+        &self.material
     }
 }
 
@@ -101,16 +145,29 @@ pub struct Light {
     children: Vec<Node>,
 }
 
-impl Light {
-    pub fn new() -> Self {
+impl Default for Light {
+    fn default() -> Self {
         Self {
             transform: Transform::default(),
             children: Vec::new(),
         }
     }
+}
+
+impl Light {
+    pub fn new(transform: Transform, children: Vec<Node>) -> Self {
+        Self {
+            transform,
+            children,
+        }
+    }
 
     pub fn transform(&self) -> &Transform {
         &self.transform
+    }
+
+    pub fn children(&self) -> &Vec<Node> {
+        &self.children
     }
 
     pub fn transform_mut(&mut self) -> &mut Transform {
@@ -144,6 +201,10 @@ impl Transformation {
 
     pub fn transform(&self) -> &Transform {
         &self.transform
+    }
+
+    pub fn children(&self) -> &Vec<Node> {
+        &self.children
     }
 
     pub fn transform_mut(&mut self) -> &mut Transform {

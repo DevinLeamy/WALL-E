@@ -1,4 +1,4 @@
-use nalgebra::Vector3;
+use nalgebra::{Matrix3, Matrix4, Rotation3, Vector3};
 
 #[derive(Clone)]
 pub struct Transform {
@@ -71,4 +71,34 @@ impl Transform {
     pub fn translate(&mut self, v: Vector3<f32>) {
         self.set_translation(self.translation() + v);
     }
+
+    /// Apply the given transform to self and return the new transform.
+    pub fn transform(&self, transform: &Transform) -> Transform {
+        let new_scale = Vector3::new(
+            self.scale.x * transform.scale.x,
+            self.scale.y * transform.scale.y,
+            self.scale.z * transform.scale.z,
+        );
+        let current_rotation = rotation_to_rot3(self.rotation);
+        let other_rotation = rotation_to_rot3(transform.rotation);
+        let new_rot3 = current_rotation * other_rotation;
+        let rotated_other_translation = current_rotation * transform.translation;
+        let new_translation = self.translation + rotated_other_translation;
+        let new_rotation = rot3_to_rotation(new_rot3);
+
+        Transform {
+            rotation: new_rotation,
+            translation: new_translation,
+            scale: new_scale,
+        }
+    }
+}
+
+fn rotation_to_rot3(rotation: Vector3<f32>) -> Rotation3<f32> {
+    Rotation3::from_euler_angles(rotation.x, rotation.y, rotation.y)
+}
+
+fn rot3_to_rotation(r: Rotation3<f32>) -> Vector3<f32> {
+    let (x, y, z) = r.euler_angles();
+    Vector3::new(x, y, z)
 }

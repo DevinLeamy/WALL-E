@@ -4,7 +4,7 @@ const DISTANCE_TO_SCREEN: f32 = 1.0;
 
 pub struct RayTracer<B: Buffer> {
     buffer: B,
-    scene: Scene,
+    scene: FlatScene,
     camera: Camera,
 }
 
@@ -12,7 +12,7 @@ impl<B: Buffer> RayTracer<B> {
     pub fn new(buffer: B, scene: Scene, camera: Camera) -> Self {
         Self {
             buffer,
-            scene,
+            scene: scene.into(),
             camera,
         }
     }
@@ -25,7 +25,7 @@ impl<B: Buffer> RayTracer<B> {
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
-                // todo!()
+                self.cast_ray(ray);
             }
         }
         self.buffer.clone()
@@ -33,6 +33,10 @@ impl<B: Buffer> RayTracer<B> {
 }
 
 impl<B: Buffer> RayTracer<B> {
+    fn cast_ray(&mut self, ray: Ray) -> Intersection {
+        todo!()
+    }
+
     fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {
         let d = DISTANCE_TO_SCREEN;
 
