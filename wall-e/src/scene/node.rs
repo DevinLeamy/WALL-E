@@ -79,6 +79,10 @@ impl Geometry {
     pub fn transform_mut(&mut self) -> &mut Transform {
         &mut self.transform
     }
+
+    pub fn add_child(&mut self, child: Node) {
+        self.children.push(child);
+    }
 }
 
 impl Geometry {
@@ -114,6 +118,10 @@ impl Light {
     pub fn transform_mut(&mut self) -> &mut Transform {
         &mut self.transform
     }
+
+    pub fn add_child(&mut self, child: Node) {
+        self.children.push(child);
+    }
 }
 
 impl Into<Node> for Light {
@@ -142,6 +150,10 @@ impl Transformation {
 
     pub fn transform_mut(&mut self) -> &mut Transform {
         &mut self.transform
+    }
+
+    pub fn add_child(&mut self, child: Node) {
+        self.children.push(child);
     }
 }
 

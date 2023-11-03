@@ -1,7 +1,5 @@
 use nalgebra::Vector3;
 use pyo3::prelude::*;
-use pyo3::types::PyString;
-use pyo3::wrap_pyfunction;
 
 use wall_e::prelude::{Geometry, Light, Node, Scene, Transformation};
 
@@ -13,30 +11,16 @@ struct PyNode {
 
 #[pymethods]
 impl PyNode {
-    #[new]
-    fn new(obj_type: &str) -> PyResult<Self> {
-        let inner = match obj_type {
-            "light" => Node::Light(Light::new().into()),
-            "transformation" => Node::Transformation(Transformation::new().into()),
-            _ => {
-                return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
-                    "Unknown node type",
-                ))
-            }
-        };
-        Ok(Self { inner })
-    }
-
-    fn rotate(&mut self, v: (f32, f32, f32)) {
-        self.inner.rotate(Vector3::new(v.0, v.1, v.2));
-    }
-
-    fn scale_nonuniform(&mut self, v: (f32, f32, f32)) {
-        self.inner.scale_nonuniform(Vector3::new(v.0, v.1, v.2));
-    }
-
-    fn add_child(&mut self, child: PyRef<PyNode>) {
-        self.inner.add_child(child.inner.clone());
+    fn add_child(&mut self, py: Python, child: PyObject) {
+        if let Ok(child) = child.extract::<PyRef<PyGeometry>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyTransform>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else {
+            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+        }
     }
 }
 
@@ -50,14 +34,108 @@ struct PyGeometry {
 impl PyGeometry {
     #[new]
     fn new(primitive_type: &str) -> PyResult<Self> {
-        let inner = Geometry::new();
-        Ok(Self { inner })
+        // TODO: Convert the primitive type into an actual primitive.
+        Ok(Self {
+            inner: Geometry::new(),
+        })
     }
 
-    fn scale_nonuniform(&mut self, v: (f32, f32, f32)) {
+    fn add_child(&mut self, py: Python, child: PyObject) {
+        if let Ok(child) = child.extract::<PyRef<PyGeometry>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyTransform>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else {
+            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+        }
+    }
+
+    fn scale(&mut self, x: f32, y: f32, z: f32) {
         self.inner
             .transform_mut()
-            .scale_nonuniform(Vector3::new(v.0, v.1, v.2));
+            .scale_nonuniform(Vector3::new(x, y, z));
+    }
+
+    fn translate(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.transform_mut().translate(Vector3::new(x, y, z));
+    }
+}
+
+#[pyclass]
+#[pyo3(name = "Light")]
+struct PyLight {
+    inner: Light,
+}
+
+#[pymethods]
+impl PyLight {
+    #[new]
+    fn new() -> PyResult<Self> {
+        Ok(Self {
+            inner: Light::new(),
+        })
+    }
+
+    fn add_child(&mut self, py: Python, child: PyObject) {
+        if let Ok(child) = child.extract::<PyRef<PyGeometry>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyTransform>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else {
+            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+        }
+    }
+
+    fn scale(&mut self, x: f32, y: f32, z: f32) {
+        self.inner
+            .transform_mut()
+            .scale_nonuniform(Vector3::new(x, y, z));
+    }
+
+    fn translate(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.transform_mut().translate(Vector3::new(x, y, z));
+    }
+}
+
+#[pyclass]
+#[pyo3(name = "Transform")]
+struct PyTransform {
+    inner: Transformation,
+}
+
+#[pymethods]
+impl PyTransform {
+    #[new]
+    fn new() -> PyResult<Self> {
+        Ok(Self {
+            inner: Transformation::new(),
+        })
+    }
+
+    fn add_child(&mut self, py: Python, child: PyObject) {
+        if let Ok(child) = child.extract::<PyRef<PyGeometry>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyTransform>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else {
+            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+        }
+    }
+
+    fn scale(&mut self, x: f32, y: f32, z: f32) {
+        self.inner
+            .transform_mut()
+            .scale_nonuniform(Vector3::new(x, y, z));
+    }
+
+    fn translate(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.transform_mut().translate(Vector3::new(x, y, z));
     }
 }
 
@@ -76,15 +154,24 @@ impl PyScene {
         }
     }
 
-    fn add_child(&mut self, child: PyRef<PyNode>) {
-        self.inner.root_mut().add_child(child.inner.clone());
+    fn set_root(&mut self, py: Python, root: PyObject) {
+        if let Ok(child) = root.extract::<PyRef<PyGeometry>>(py) {
+            *self.inner.root_mut() = child.inner.clone().into();
+        } else if let Ok(child) = root.extract::<PyRef<PyTransform>>(py) {
+            *self.inner.root_mut() = child.inner.clone().into();
+        } else if let Ok(child) = root.extract::<PyRef<PyLight>>(py) {
+            *self.inner.root_mut() = child.inner.clone().into();
+        } else {
+            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+        }
     }
 }
 
 #[pymodule]
 fn wall_e_py(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_class::<PyNode>()?;
     m.add_class::<PyGeometry>()?;
     m.add_class::<PyScene>()?;
+    m.add_class::<PyLight>()?;
+    m.add_class::<PyTransform>()?;
     Ok(())
 }
