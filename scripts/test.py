@@ -20,6 +20,9 @@ root.add_child(light)
 scene.set_root(root)
 
 camera = Camera((0, 0, 800), (0, 0, -1), (0, 1, 0), 50)
-camera.look_at(1.0, 2.0, 1.0)
+camera.set_position(0.0, 0.0, 0.0)
+camera.set_view(0.0, 0.0, -1.0)
+camera.set_up(0.0, 1.0, 0.0)
 
-ray_trace(scene, camera, 500, 500, "image.png")
+ray_trace(scene, camera, 20, 20, "image.png")
+# ray_trace(scene, camera, 500, 500, "image.png")

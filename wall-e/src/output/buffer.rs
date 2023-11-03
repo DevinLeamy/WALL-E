@@ -8,4 +8,8 @@ pub trait Buffer: Clone {
     fn set(&mut self, x: u32, y: u32, value: Self::Value);
 
     fn get(&self, x: u32, y: u32) -> Self::Value;
+
+    fn aspect(&self) -> f32 {
+        self.width() as f32 / self.height() as f32
+    }
 }

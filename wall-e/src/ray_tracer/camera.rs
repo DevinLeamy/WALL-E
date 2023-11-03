@@ -1,8 +1,9 @@
-use nalgebra::{Unit, Vector3};
+use nalgebra::{Matrix4, Transform, Unit, Vector3};
 
 #[derive(Clone)]
 pub struct Camera {
     position: Vector3<f32>,
+    /// Field of view in degrees.
     fov: f32,
     target: Unit<Vector3<f32>>,
     up: Unit<Vector3<f32>>,
@@ -38,5 +39,22 @@ impl Camera {
 
     pub fn look_at(&mut self, position: Vector3<f32>) {
         self.target = Unit::new_normalize(position - self.position);
+    }
+
+    pub fn origin(&self) -> Vector3<f32> {
+        self.position.clone()
+    }
+
+    pub fn fov(&self) -> f32 {
+        self.fov
+    }
+
+    /// Matrix to convert from camera space - centered at (0, 0, 0) and looking
+    /// down the -z axis) to world space.
+    pub fn camera_to_world_mat(&self) -> Matrix4<f32> {
+        let target = self.position + self.target.into_inner();
+        let world_to_camera = Matrix4::look_at_lh(&self.position.into(), &target.into(), &self.up);
+
+        world_to_camera.try_inverse().unwrap()
     }
 }
