@@ -1,11 +1,11 @@
-use nalgebra::Vector3;
+use nalgebra::{Unit, Vector3};
 
 #[derive(Clone)]
 pub struct Camera {
     position: Vector3<f32>,
     fov: f32,
-    target: Vector3<f32>,
-    up: Vector3<f32>,
+    target: Unit<Vector3<f32>>,
+    up: Unit<Vector3<f32>>,
 }
 
 impl Camera {
@@ -13,8 +13,8 @@ impl Camera {
         Self {
             position,
             fov,
-            target,
-            up,
+            target: Unit::new_normalize(target),
+            up: Unit::new_normalize(up),
         }
     }
 }
@@ -29,10 +29,14 @@ impl Camera {
     }
 
     pub fn set_target(&mut self, target: Vector3<f32>) {
-        self.target = target;
+        self.target = Unit::new_normalize(target);
     }
 
     pub fn set_up(&mut self, up: Vector3<f32>) {
-        self.up = up;
+        self.up = Unit::new_normalize(up);
+    }
+
+    pub fn look_at(&mut self, position: Vector3<f32>) {
+        self.target = Unit::new_normalize(position - self.position);
     }
 }
