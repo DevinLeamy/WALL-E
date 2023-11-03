@@ -83,9 +83,7 @@ impl Geometry {
     pub fn add_child(&mut self, child: Node) {
         self.children.push(child);
     }
-}
 
-impl Geometry {
     pub fn set_material(&mut self, material: PhongMaterial) {
         self.material = material;
     }

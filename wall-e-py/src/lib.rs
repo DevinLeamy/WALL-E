@@ -1,7 +1,9 @@
 use nalgebra::Vector3;
 use pyo3::prelude::*;
 
-use wall_e::prelude::{Camera, Geometry, Light, Node, PngImage, RayTracer, Scene, Transformation};
+use wall_e::prelude::{
+    Camera, Geometry, Light, Node, PhongMaterial, PngImage, RayTracer, Scene, Transformation,
+};
 
 #[pyclass]
 #[pyo3(name = "Node")]
@@ -60,6 +62,10 @@ impl PyGeometry {
 
     fn translate(&mut self, x: f32, y: f32, z: f32) {
         self.inner.transform_mut().translate(Vector3::new(x, y, z));
+    }
+
+    fn set_material(&mut self, material: PyRef<PyMaterial>) {
+        self.inner.set_material(material.inner.clone());
     }
 }
 
@@ -213,6 +219,26 @@ impl PyCamera {
     }
 }
 
+#[pyclass]
+#[pyo3(name = "Material")]
+struct PyMaterial {
+    inner: PhongMaterial,
+}
+
+#[pymethods]
+impl PyMaterial {
+    #[new]
+    fn new(kd: (f32, f32, f32), ks: (f32, f32, f32), shininess: f32) -> Self {
+        Self {
+            inner: PhongMaterial::new(
+                Vector3::new(kd.0, kd.1, kd.2),
+                Vector3::new(ks.0, ks.1, ks.2),
+                shininess,
+            ),
+        }
+    }
+}
+
 #[pyfunction]
 fn ray_trace(
     scene: &PyScene,
@@ -240,6 +266,7 @@ fn wall_e_py(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PyLight>()?;
     m.add_class::<PyTransform>()?;
     m.add_class::<PyCamera>()?;
+    m.add_class::<PyMaterial>()?;
     m.add_function(wrap_pyfunction!(ray_trace, m)?)?;
 
     Ok(())
