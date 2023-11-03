@@ -207,6 +207,10 @@ impl PyCamera {
     fn set_position(&mut self, x: f32, y: f32, z: f32) {
         self.inner.set_position(Vector3::new(x, y, z));
     }
+
+    fn look_at(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.look_at(Vector3::new(x, y, z));
+    }
 }
 
 #[pyfunction]
