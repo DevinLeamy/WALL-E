@@ -27,4 +27,6 @@ camera.look_at(0.0, 0.0, 0.0)
 
 scene.set_root(root)
 # ray_trace(scene, camera, 20, 20, "image.png")
-ray_trace(scene, camera, 500, 500, "image.png")
+print("trace")
+ray_trace(scene, camera, 300, 300, "image.png")
+# ray_trace(scene, camera, 1000, 800, "image.png")

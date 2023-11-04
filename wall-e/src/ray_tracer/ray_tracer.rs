@@ -20,14 +20,12 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     pub fn run(&mut self) -> B {
-        // println!("Ray tracing scene");
-        // println!("{}", self.scene);
         for x in 0..self.buffer.width() {
             for y in 0..self.buffer.height() {
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
-                let Some(intersection) = self.cast_ray(ray) else {
+                let Some(intersection) = self.cast_primary_ray(ray) else {
                     continue;
                 };
 
@@ -40,7 +38,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 }
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
-    fn cast_ray(&mut self, ray: Ray) -> Option<Intersection> {
+    fn cast_primary_ray(&mut self, ray: Ray) -> Option<Intersection> {
         let intersections = self.ray_geometry_intersections(&ray);
         if intersections.is_empty() {
             return None;
