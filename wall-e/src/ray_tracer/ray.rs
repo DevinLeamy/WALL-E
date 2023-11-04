@@ -1,6 +1,6 @@
 use nalgebra::{Unit, Vector3};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Ray {
     origin: Vector3<f32>,
     direction: Unit<Vector3<f32>>,

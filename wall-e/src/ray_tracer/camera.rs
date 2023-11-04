@@ -1,6 +1,6 @@
-use nalgebra::{Matrix4, Transform, Unit, Vector3};
+use nalgebra::{Matrix4, Unit, Vector3};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Camera {
     position: Vector3<f32>,
     /// Field of view in degrees.

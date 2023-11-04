@@ -1,3 +1,5 @@
+use nalgebra::Unit;
+
 use crate::prelude::*;
 
 const DISTANCE_TO_SCREEN: f32 = 1.0;
@@ -25,12 +27,20 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
+                // Cast the primary ray into the scene to intersect with the scene's geometry.
                 let Some(intersection) = self.cast_primary_ray(ray) else {
                     continue;
                 };
 
-                self.buffer
-                    .set(x, y, intersection.material().diffuse().clone());
+                // Compute the light at the point of intersection by casting secondary, shadow,
+                // rays directly towards the lights in the scene.
+                let mut total_light = Vector3::<f32>::zeros();
+                for light in self.scene.lights() {
+                    total_light += self.light_contribution_at_intersection(light, &intersection);
+                }
+                // println!("({:?}) TOTAL LIGHT: {:?}", self.scene.lights().len(), total_light);
+
+                self.buffer.set(x, y, total_light);
             }
         }
         self.buffer.clone()
@@ -50,7 +60,27 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             }
         }
 
+
         Some(nearest.clone())
+    }
+
+    fn light_contribution_at_intersection(
+        &self,
+        light: &Light,
+        intersection: &Intersection,
+    ) -> Vector3<f32> {
+        let light_ray = Unit::new_normalize(light.transform().translation() - intersection.point());
+        let viewer_ray = -intersection.ray().direction();
+        let normal = intersection.normal();
+
+        let light = super::shader::phong_illumination(
+            normal,
+            light_ray,
+            viewer_ray,
+            intersection.material(),
+        );
+
+        light
     }
 
     fn ray_geometry_intersections(&mut self, ray: &Ray) -> Vec<Intersection> {
@@ -85,11 +115,11 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         let camera_x = screen_x * tan_half_fov * d;
         let camera_y = screen_y * tan_half_fov * d;
 
-        let pixel_camera_pos = Vector3::new(camera_x, camera_y, -d);
+        let pixel_camera_pos = Vector3::new(camera_x, camera_y, d);
 
         // Convert the Camera coordinates to World coordinates.
         let pixel_world_pos = self.camera.camera_to_world_mat() * pixel_camera_pos.push(1.0);
-
+        
         pixel_world_pos.xyz()
     }
 }

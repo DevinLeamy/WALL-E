@@ -19,6 +19,14 @@ impl PhongMaterial {
     pub fn diffuse(&self) -> &Vector3<f32> {
         &self.diffuse
     }
+
+    pub fn specular(&self) -> &Vector3<f32> {
+        &self.specular
+    }
+
+    pub fn shininess(&self) -> f32 {
+        self.shininess
+    }
 }
 
 impl Default for PhongMaterial {

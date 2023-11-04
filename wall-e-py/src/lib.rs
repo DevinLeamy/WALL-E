@@ -215,8 +215,8 @@ impl PyCamera {
             inner: Camera::new(
                 Vector3::new(position.0, position.1, position.2),
                 fov,
-                Vector3::new(up.0, up.1, up.2),
                 Vector3::new(view.0, view.1, view.2),
+                Vector3::new(up.0, up.1, up.2),
             ),
         }
     }

@@ -34,7 +34,7 @@ impl Collidable for Sphere {
             // TODO: We actually want to smallest value larger than 0.0, because we don't
             // want to register "internal" collisions.
             let t0 = (-b + disc.sqrt()) / (2.0 * a);
-            let t1 = (b + disc.sqrt()) / (2.0 * a);
+            let t1 = (-b - disc.sqrt()) / (2.0 * a);
             f32::min(t0, t1)
         };
 

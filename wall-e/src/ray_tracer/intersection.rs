@@ -4,7 +4,7 @@ use crate::prelude::PhongMaterial;
 
 use super::Ray;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Intersection {
     t: f32,
     ray: Ray,
@@ -41,5 +41,9 @@ impl Intersection {
 
     pub fn normal(&self) -> Unit<Vector3<f32>> {
         self.normal.clone()
+    }
+
+    pub fn ray(&self) -> Ray {
+        self.ray.clone()
     }
 }
