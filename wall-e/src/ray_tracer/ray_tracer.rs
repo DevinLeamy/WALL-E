@@ -2,13 +2,13 @@ use crate::prelude::*;
 
 const DISTANCE_TO_SCREEN: f32 = 1.0;
 
-pub struct RayTracer<B: Buffer> {
+pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
     buffer: B,
     scene: FlatScene,
     camera: Camera,
 }
 
-impl<B: Buffer> RayTracer<B> {
+impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     pub fn new(buffer: B, scene: Scene, camera: Camera) -> Self {
         Self {
             buffer,
@@ -18,32 +18,51 @@ impl<B: Buffer> RayTracer<B> {
     }
 }
 
-impl<B: Buffer> RayTracer<B> {
+impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     pub fn run(&mut self) -> B {
-        println!("Ray tracing scene");
-        println!("{}", self.scene);
+        // println!("Ray tracing scene");
+        // println!("{}", self.scene);
         for x in 0..self.buffer.width() {
             for y in 0..self.buffer.height() {
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
-                self.cast_ray(ray);
+                let Some(interection) = self.cast_ray(ray) else {
+                    continue;
+                };
+
+                self.buffer.set(x, y, Vector3::new(1.0, 0.0, 0.0));
             }
         }
         self.buffer.clone()
     }
 }
 
-impl<B: Buffer> RayTracer<B> {
+impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     fn cast_ray(&mut self, ray: Ray) -> Option<Intersection> {
-        let mut nearest_intersection = Option::<Intersection>::None;
-        for geometry in self.scene.geometry() {
-            if let Some(intersection) = geometry.intersect(&ray) {
-
+        let intersections = self.ray_geometry_intersections(&ray);
+        if intersections.is_empty() {
+            return None;
+        }
+        let mut nearest: &Intersection = &intersections[0];
+        for i in 1..intersections.len() {
+            if intersections[i].t() < nearest.t() {
+                nearest = &intersections[i];
             }
         }
 
-        nearest_intersection
+        Some(nearest.clone())
+    }
+
+    fn ray_geometry_intersections(&mut self, ray: &Ray) -> Vec<Intersection> {
+        let mut intersections = Vec::<Intersection>::new();
+        for geometry in self.scene.geometry() {
+            if let Some(intersection) = geometry.intersect(&ray) {
+                intersections.push(intersection)
+            }
+        }
+
+        intersections
     }
 
     fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {
