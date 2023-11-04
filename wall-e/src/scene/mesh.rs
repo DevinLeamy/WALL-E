@@ -1,6 +1,6 @@
 use super::Collidable;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Mesh {}
 
 impl Collidable for Mesh {}

@@ -2,7 +2,7 @@ use nalgebra::Vector3;
 
 use super::{Collidable, PhongMaterial, Sphere, Transform};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Node {
     Light(Light),
     Geometry(Geometry),
@@ -61,7 +61,7 @@ impl Node {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Geometry {
     transform: Transform,
     children: Vec<Node>,
@@ -139,7 +139,7 @@ impl Into<Node> for Geometry {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Light {
     transform: Transform,
     children: Vec<Node>,
@@ -185,7 +185,7 @@ impl Into<Node> for Light {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Transformation {
     transform: Transform,
     children: Vec<Node>,

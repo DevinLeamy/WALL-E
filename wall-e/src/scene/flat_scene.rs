@@ -1,5 +1,6 @@
 use super::{Geometry, Light, Node, Scene, Transform};
 
+#[derive(Debug)]
 pub struct FlatScene {
     lights: Vec<Light>,
     geometry: Vec<Geometry>,
@@ -8,6 +9,19 @@ pub struct FlatScene {
 impl FlatScene {
     pub fn new(lights: Vec<Light>, geometry: Vec<Geometry>) -> Self {
         Self { lights, geometry }
+    }
+}
+
+impl std::fmt::Display for FlatScene {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for light in &self.lights {
+            writeln!(f, "Light: {:?}", light)?;
+        }
+        for geometry in &self.geometry {
+            writeln!(f, "Object: {:?}", geometry)?;
+        }
+
+        Ok(())
     }
 }
 

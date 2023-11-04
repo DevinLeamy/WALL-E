@@ -20,6 +20,8 @@ impl<B: Buffer> RayTracer<B> {
 
 impl<B: Buffer> RayTracer<B> {
     pub fn run(&mut self) -> B {
+        println!("Ray tracing scene");
+        println!("{}", self.scene);
         for x in 0..self.buffer.width() {
             for y in 0..self.buffer.height() {
                 let pixel_pos = self.compute_pixel_position(x, y);

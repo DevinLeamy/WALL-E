@@ -1,6 +1,6 @@
-use nalgebra::{Matrix3, Matrix4, Rotation3, Vector3};
+use nalgebra::{Rotation3, Vector3};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Transform {
     rotation: Vector3<f32>,
     translation: Vector3<f32>,
