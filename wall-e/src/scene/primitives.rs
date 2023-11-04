@@ -38,7 +38,7 @@ impl Collidable for Sphere {
             return None;
         } 
         
-        Some(Intersection::new(ray.clone(), t))
+        Some(Intersection::new(ray.clone(), None, t))
     }
 }
 

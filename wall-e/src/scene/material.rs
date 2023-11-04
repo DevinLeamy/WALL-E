@@ -15,6 +15,10 @@ impl PhongMaterial {
             shininess,
         }
     }
+
+    pub fn diffuse(&self) -> &Vector3<f32> {
+        &self.diffuse
+    }
 }
 
 impl Default for PhongMaterial {

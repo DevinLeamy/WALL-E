@@ -138,7 +138,12 @@ impl Geometry {
 impl Collidable for Geometry {
     fn intersect(&self, ray: &Ray) -> Option<Intersection> {
         // TODO: Apply transforms to the ray to account for the model's transform.
-        self.primitive.intersect(ray)
+        let Some(mut intersection) = self.primitive.intersect(ray) else {
+            return None;
+        };
+
+        intersection.set_material(self.material.clone());
+        Some(intersection)
     }
 }
 

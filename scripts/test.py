@@ -1,6 +1,7 @@
 from wall_e_py import Scene, Transform, Geometry, Light, ray_trace, Camera, Material
 
 red = Material((1.0, 0.0, 0.0), (0.1, 0.1, 0.1), 1.0)
+green = Material((0.0, 1.0, 0.0), (0.1, 0.1, 0.1), 1.0)
 scene = Scene()
 
 root = Transform()
@@ -10,7 +11,7 @@ root.translate(2.0, 1.0, 1.0)
 geometry = Geometry("sphere")
 geometry.scale(1.0, 1.0, 1.0)
 geometry.translate(0.0, 0.0, 0.0)
-geometry.set_material(red)
+geometry.set_material(green)
 
 light = Light()
 light.scale(1.0, 2.0, 1.0)

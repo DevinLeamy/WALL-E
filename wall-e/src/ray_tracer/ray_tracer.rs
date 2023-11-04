@@ -27,11 +27,12 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
-                let Some(interection) = self.cast_ray(ray) else {
+                let Some(intersection) = self.cast_ray(ray) else {
                     continue;
                 };
 
-                self.buffer.set(x, y, Vector3::new(1.0, 0.0, 0.0));
+                self.buffer
+                    .set(x, y, intersection.material().diffuse().clone());
             }
         }
         self.buffer.clone()
