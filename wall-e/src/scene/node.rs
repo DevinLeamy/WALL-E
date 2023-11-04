@@ -1,5 +1,7 @@
 use nalgebra::Vector3;
 
+use crate::prelude::{Intersection, Ray};
+
 use super::{Collidable, PhongMaterial, Sphere, Transform};
 
 #[derive(Clone, Debug)]
@@ -130,6 +132,13 @@ impl Geometry {
 
     pub fn material(&self) -> &PhongMaterial {
         &self.material
+    }
+}
+
+impl Collidable for Geometry {
+    fn intersect(&self, ray: &Ray) -> Option<Intersection> {
+        // TODO: Apply transforms to the ray to account for the model's transform.
+        self.primitive.intersect(ray)
     }
 }
 

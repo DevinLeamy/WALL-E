@@ -12,6 +12,16 @@ impl FlatScene {
     }
 }
 
+impl FlatScene {
+    pub fn geometry(&self) -> &Vec<Geometry> {
+        &self.geometry
+    }
+
+    pub fn lights(&self) -> &Vec<Light> {
+        &self.lights
+    }
+}
+
 impl std::fmt::Display for FlatScene {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for light in &self.lights {

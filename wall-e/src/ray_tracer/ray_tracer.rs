@@ -35,8 +35,15 @@ impl<B: Buffer> RayTracer<B> {
 }
 
 impl<B: Buffer> RayTracer<B> {
-    fn cast_ray(&mut self, ray: Ray) -> Intersection {
-        todo!()
+    fn cast_ray(&mut self, ray: Ray) -> Option<Intersection> {
+        let mut nearest_intersection = Option::<Intersection>::None;
+        for geometry in self.scene.geometry() {
+            if let Some(intersection) = geometry.intersect(&ray) {
+
+            }
+        }
+
+        nearest_intersection
     }
 
     fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {

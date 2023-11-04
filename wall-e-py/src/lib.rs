@@ -2,8 +2,26 @@ use nalgebra::Vector3;
 use pyo3::prelude::*;
 
 use wall_e::prelude::{
-    Camera, Geometry, Light, Node, PhongMaterial, PngImage, RayTracer, Scene, Transformation,
+    Camera, Collidable, Cube, Geometry, Light, Node, PhongMaterial, PngImage, RayTracer, Scene,
+    Sphere, Transformation,
 };
+
+enum PrimitiveType {
+    Sphere,
+    Cube,
+    Mesh,
+}
+
+impl Into<PrimitiveType> for &str {
+    fn into(self) -> PrimitiveType {
+        match self {
+            "sphere" => PrimitiveType::Sphere,
+            "cube" => PrimitiveType::Cube,
+            "mesh" => PrimitiveType::Mesh,
+            _ => panic!("invalid primitive type: {self}"),
+        }
+    }
+}
 
 #[pyclass]
 #[pyo3(name = "Node")]
@@ -36,9 +54,14 @@ struct PyGeometry {
 impl PyGeometry {
     #[new]
     fn new(primitive_type: &str) -> PyResult<Self> {
-        // TODO: Convert the primitive type into an actual primitive.
+        let primitive_type: PrimitiveType = primitive_type.into();
+        let primitive: Box<dyn Collidable> = match primitive_type {
+            PrimitiveType::Sphere => Box::new(Sphere::new(1.0)),
+            PrimitiveType::Cube => Box::new(Cube::new(1.0)),
+            PrimitiveType::Mesh => todo!(),
+        };
         Ok(Self {
-            inner: Geometry::default(),
+            inner: Geometry::from_primitive(primitive),
         })
     }
 
