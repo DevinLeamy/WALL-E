@@ -57,7 +57,7 @@ impl PyGeometry {
         let primitive_type: PrimitiveType = primitive_type.into();
         let primitive: Box<dyn Collidable> = match primitive_type {
             PrimitiveType::Sphere => Box::new(Sphere::new(1.0)),
-            PrimitiveType::Cube => Box::new(Cube::new(1.0)),
+            PrimitiveType::Cube => Box::new(Cube::new(2.0)),
             PrimitiveType::Mesh => todo!(),
         };
         Ok(Self {

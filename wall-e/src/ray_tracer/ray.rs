@@ -30,10 +30,22 @@ impl Ray {
     }
 
     pub fn into_inverse_transform_ray(&self, transform: &Transform) -> Self {
-        Self::new(self.origin - transform.translation(), self.direction)
+        let p1 = self.origin.push(1.0);
+        let p2 = (self.origin + self.direction.into_inner()).push(1.0);
+        let m = transform.as_mat4().try_inverse().unwrap();
+        let new_p1 = m * p1;
+        let new_p2 = m * p2;
+
+        Self::from_points(new_p1.xyz(), new_p2.xyz())
     }
 
     pub fn into_transformed_ray(&self, transform: &Transform) -> Self {
-        Self::new(self.origin + transform.translation(), self.direction)
+        let p1 = self.origin.push(1.0);
+        let p2 = (self.origin + self.direction.into_inner()).push(1.0);
+        let m = transform.as_mat4();
+        let new_p1 = m * p1;
+        let new_p2 = m * p2;
+
+        Self::from_points(new_p1.xyz(), new_p2.xyz())
     }
 }

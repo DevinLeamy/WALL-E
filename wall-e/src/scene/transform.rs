@@ -1,4 +1,4 @@
-use nalgebra::{Rotation3, Vector3};
+use nalgebra::{Matrix3, Matrix4, Rotation3, Vector3, U3};
 
 #[derive(Clone, Debug)]
 pub struct Transform {
@@ -91,6 +91,24 @@ impl Transform {
             translation: new_translation,
             scale: new_scale,
         }
+    }
+
+    pub fn as_mat4(&self) -> Matrix4<f32> {
+        // Order: T - R - S
+        let mut m = Matrix4::<f32>::identity();
+        m.prepend_nonuniform_scaling_mut(&self.scale);
+        m.prepend_translation_mut(&self.translation);
+
+        m
+    }
+
+    pub fn as_mat3(&self) -> Matrix3<f32> {
+        // Order: R - S
+        let m4 = self.as_mat4();
+        let m3_view = m4.fixed_slice::<3, 3>(0, 0);
+        let m = Matrix3::from_iterator(m3_view.iter().cloned());
+
+        m
     }
 }
 
