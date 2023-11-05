@@ -1,6 +1,9 @@
 use nalgebra::{Unit, Vector3};
 
-use crate::prelude::PhongMaterial;
+use crate::{
+    prelude::{PhongMaterial, Transform},
+    utils::transform_normal,
+};
 
 use super::Ray;
 
@@ -14,12 +17,17 @@ pub struct Intersection {
 }
 
 impl Intersection {
-    pub fn new(ray: Ray, material: Option<PhongMaterial>, t: f32, normal: Unit<Vector3<f32>>) -> Self {
+    pub fn new(
+        ray: Ray,
+        material: Option<PhongMaterial>,
+        t: f32,
+        normal: Unit<Vector3<f32>>,
+    ) -> Self {
         Self {
             t,
             material: material.unwrap_or_default(),
             ray,
-            normal
+            normal,
         }
     }
 
@@ -45,5 +53,14 @@ impl Intersection {
 
     pub fn ray(&self) -> Ray {
         self.ray.clone()
+    }
+
+    pub fn apply_transforms(self, transform: &Transform) -> Self {
+        Self {
+            t: self.t,
+            material: self.material,
+            ray: self.ray.into_transformed_ray(transform),
+            normal: transform_normal(self.normal, transform),
+        }
     }
 }
