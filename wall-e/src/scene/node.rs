@@ -97,7 +97,7 @@ impl Geometry {
         }
     }
 
-    pub fn from_primitive(primitive: Box<dyn Collidable>) -> Self {
+    pub fn from_collidable(primitive: Box<dyn Collidable>) -> Self {
         Self {
             transform: Transform::default(),
             children: Vec::new(),

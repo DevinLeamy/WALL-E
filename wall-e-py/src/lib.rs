@@ -1,15 +1,18 @@
+use std::path::PathBuf;
+
 use nalgebra::Vector3;
 use pyo3::prelude::*;
 
 use wall_e::prelude::{
-    Camera, Collidable, Cube, Geometry, Light, Node, PhongMaterial, PngImage, RayTracer, Scene,
-    Sphere, Transformation,
+    Camera, Collidable, Cube, Geometry, Light, Mesh, Node, PhongMaterial, PngImage, RayTracer,
+    Scene, Sphere, Transformation,
 };
+
+const MESH_PATH: &'static str = "./wall-e-py/assets/meshes/";
 
 enum PrimitiveType {
     Sphere,
     Cube,
-    Mesh,
 }
 
 impl Into<PrimitiveType> for &str {
@@ -17,7 +20,6 @@ impl Into<PrimitiveType> for &str {
         match self {
             "sphere" => PrimitiveType::Sphere,
             "cube" => PrimitiveType::Cube,
-            "mesh" => PrimitiveType::Mesh,
             _ => panic!("invalid primitive type: {self}"),
         }
     }
@@ -38,8 +40,10 @@ impl PyNode {
             self.inner.add_child(child.inner.clone().into());
         } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
             self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyMesh>>(py) {
+            self.inner.add_child(child.inner.clone().into());
         } else {
-            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+            panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
         }
     }
 }
@@ -58,10 +62,9 @@ impl PyGeometry {
         let primitive: Box<dyn Collidable> = match primitive_type {
             PrimitiveType::Sphere => Box::new(Sphere::new(1.0)),
             PrimitiveType::Cube => Box::new(Cube::new(2.0)),
-            PrimitiveType::Mesh => todo!(),
         };
         Ok(Self {
-            inner: Geometry::from_primitive(primitive),
+            inner: Geometry::from_collidable(primitive),
         })
     }
 
@@ -72,8 +75,60 @@ impl PyGeometry {
             self.inner.add_child(child.inner.clone().into());
         } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
             self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyMesh>>(py) {
+            self.inner.add_child(child.inner.clone().into());
         } else {
-            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+            panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
+        }
+    }
+
+    fn scale(&mut self, x: f32, y: f32, z: f32) {
+        self.inner
+            .transform_mut()
+            .scale_nonuniform(Vector3::new(x, y, z));
+    }
+
+    fn translate(&mut self, x: f32, y: f32, z: f32) {
+        self.inner.transform_mut().translate(Vector3::new(x, y, z));
+    }
+
+    fn set_material(&mut self, material: PyRef<PyMaterial>) {
+        self.inner.set_material(material.inner.clone());
+    }
+}
+
+#[pyclass]
+#[pyo3(name = "Mesh")]
+struct PyMesh {
+    inner: Geometry,
+}
+
+#[pymethods]
+impl PyMesh {
+    #[new]
+    fn new(mesh_name: String) -> Self {
+        let mut path = PathBuf::from(MESH_PATH);
+        path.push(mesh_name);
+        println!("{:?}", path);
+        // assert!(path.exists() && path.is_file() && path.ends_with(".obj"));
+        let mesh = Mesh::from_path(path);
+
+        Self {
+            inner: Geometry::from_collidable(Box::new(mesh)),
+        }
+    }
+
+    fn add_child(&mut self, py: Python, child: PyObject) {
+        if let Ok(child) = child.extract::<PyRef<PyGeometry>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyTransform>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyMesh>>(py) {
+            self.inner.add_child(child.inner.clone().into());
+        } else {
+            panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
         }
     }
 
@@ -114,8 +169,10 @@ impl PyLight {
             self.inner.add_child(child.inner.clone().into());
         } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
             self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyMesh>>(py) {
+            self.inner.add_child(child.inner.clone().into());
         } else {
-            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+            panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
         }
     }
 
@@ -152,8 +209,10 @@ impl PyTransform {
             self.inner.add_child(child.inner.clone().into());
         } else if let Ok(child) = child.extract::<PyRef<PyLight>>(py) {
             self.inner.add_child(child.inner.clone().into());
+        } else if let Ok(child) = child.extract::<PyRef<PyMesh>>(py) {
+            self.inner.add_child(child.inner.clone().into());
         } else {
-            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+            panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
         }
     }
 
@@ -190,8 +249,10 @@ impl PyScene {
             *self.inner.root_mut() = child.inner.clone().into();
         } else if let Ok(child) = root.extract::<PyRef<PyLight>>(py) {
             *self.inner.root_mut() = child.inner.clone().into();
+        } else if let Ok(child) = root.extract::<PyRef<PyMesh>>(py) {
+            *self.inner.root_mut() = child.inner.clone().into();
         } else {
-            panic!("add_child only accepts PyGeometry, PyTransform, or PyLight");
+            panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
         }
     }
 }
@@ -290,6 +351,7 @@ fn wall_e_py(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PyTransform>()?;
     m.add_class::<PyCamera>()?;
     m.add_class::<PyMaterial>()?;
+    m.add_class::<PyMesh>()?;
     m.add_function(wrap_pyfunction!(ray_trace, m)?)?;
 
     Ok(())
