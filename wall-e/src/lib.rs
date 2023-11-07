@@ -2,6 +2,8 @@ mod output;
 mod ray_tracer;
 mod scene;
 mod utils;
+mod obj_loader;
+mod obj_mesh;
 
 pub mod prelude {
     pub use crate::output::*;
