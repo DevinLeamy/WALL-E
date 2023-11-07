@@ -109,7 +109,6 @@ impl PyMesh {
     fn new(mesh_name: String) -> Self {
         let mut path = PathBuf::from(MESH_PATH);
         path.push(mesh_name);
-        println!("{:?}", path);
         // assert!(path.exists() && path.is_file() && path.ends_with(".obj"));
         let mesh = Mesh::from_path(path);
 

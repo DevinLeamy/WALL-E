@@ -1,4 +1,4 @@
-use nalgebra::Vector3;
+use nalgebra::{Unit, Vector3};
 
 use crate::{
     prelude::{Intersection, Ray},
@@ -20,8 +20,43 @@ impl Triangle {
 }
 
 impl Collidable for Triangle {
-    fn intersect(&self, _ray: &Ray) -> Option<Intersection> {
-        todo!()
-        // Some(Intersection::new(ray.clone(), None, t, normal))
+    fn intersect(&self, ray: &Ray) -> Option<Intersection> {
+        let edge1 = self.p2 - self.p1;
+        let edge2 = self.p3 - self.p1;
+
+        let cross_dir_edge2 = ray.direction().cross(&edge2);
+        let det = edge1.dot(&cross_dir_edge2);
+
+        const EPSILON: f32 = 1e-10;
+        if det.abs() < EPSILON {
+            return None; // Parallel or lies in triangle plane
+        }
+
+        let inv_det = 1.0 / det;
+        let to_origin = ray.origin() - self.p1;
+        let u = inv_det * to_origin.dot(&cross_dir_edge2);
+
+        if u < 0.0 || u > 1.0 {
+            return None;
+        }
+
+        let cross_origin_edge1 = to_origin.cross(&edge1);
+        let v = inv_det * ray.direction().dot(&cross_origin_edge1);
+
+        if v < 0.0 || u + v > 1.0 {
+            return None;
+        }
+
+        let t = inv_det * edge2.dot(&cross_origin_edge1);
+        if t > EPSILON {
+            return Some(Intersection::new(
+                ray.clone(),
+                None,
+                t,
+                Unit::new_normalize(edge1.cross(&edge2)),
+            ));
+        }
+
+        None
     }
 }

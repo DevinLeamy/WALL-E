@@ -25,7 +25,16 @@ impl Mesh {
 }
 
 impl Collidable for Mesh {
-    fn intersect(&self, _ray: &Ray) -> Option<Intersection> {
-        todo!()
+    fn intersect(&self, ray: &Ray) -> Option<Intersection> {
+        let mut intersection: Option<Intersection> = None;
+        for triangle in &self.triangles {
+            if let Some(hit) = triangle.intersect(ray) {
+                if intersection.is_none() || intersection.as_ref().unwrap().t() > hit.t() {
+                    intersection = Some(hit);
+                }
+            }
+        }
+
+        intersection
     }
 }
