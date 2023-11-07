@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use nalgebra::Unit;
 
 use crate::prelude::*;
@@ -22,8 +24,14 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     pub fn run(&mut self) -> B {
+        let start_time = Instant::now();
+        let total_pixels = self.buffer.width() * self.buffer.height();
+        let mut traced = 0;
+
         for x in 0..self.buffer.width() {
             for y in 0..self.buffer.height() {
+                traced += 1;
+                println!("⏳ Completed {:.1}%", traced as f32 / total_pixels as f32 * 100.0);
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
@@ -43,6 +51,8 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                 self.buffer.set(x, y, total_light);
             }
         }
+        let duration = Instant::now().duration_since(start_time);
+        println!("📷 Render time {:.2}s", duration.as_secs_f32());
         self.buffer.clone()
     }
 }
