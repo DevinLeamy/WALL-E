@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use super::Collidable;
-use crate::{obj_loader::ObjLoader, obj_mesh::ObjMesh, prelude::*};
+use crate::{obj_loader::ObjLoader, prelude::*};
 
 #[derive(Clone, Debug)]
 pub struct Mesh {
@@ -25,7 +25,7 @@ impl Mesh {
 }
 
 impl Collidable for Mesh {
-    fn intersect(&self, ray: &Ray) -> Option<Intersection> {
+    fn intersect(&self, _ray: &Ray) -> Option<Intersection> {
         todo!()
     }
 }

@@ -66,7 +66,7 @@ impl SceneFlattener {
 
 impl SceneFlattener {
     fn traverse_scene(&mut self, scene: &Scene) {
-        self.traverse_node(&scene.root());
+        self.traverse_node(scene.root());
     }
 
     fn traverse_node(&mut self, node: &Node) {
@@ -83,7 +83,7 @@ impl SceneFlattener {
         self.pop_transform();
     }
 
-    fn handle_light(&mut self, light: &Light) {
+    fn handle_light(&mut self, _light: &Light) {
         let new_light = Light::new(self.top_transform(), Vec::new());
         self.lights.push(new_light);
     }

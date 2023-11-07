@@ -16,7 +16,7 @@ impl Node {
         self.children_mut().push(child);
     }
 
-    pub fn rotate(&mut self, v: Vector3<f32>) {
+    pub fn rotate(&mut self, _v: Vector3<f32>) {
         todo!()
     }
 
@@ -147,25 +147,16 @@ impl Collidable for Geometry {
     }
 }
 
-impl Into<Node> for Geometry {
-    fn into(self) -> Node {
-        Node::Geometry(self)
+impl From<Geometry> for Node {
+    fn from(val: Geometry) -> Self {
+        Node::Geometry(val)
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Light {
     transform: Transform,
     children: Vec<Node>,
-}
-
-impl Default for Light {
-    fn default() -> Self {
-        Self {
-            transform: Transform::default(),
-            children: Vec::new(),
-        }
-    }
 }
 
 impl Light {
@@ -193,9 +184,9 @@ impl Light {
     }
 }
 
-impl Into<Node> for Light {
-    fn into(self) -> Node {
-        Node::Light(self)
+impl From<Light> for Node {
+    fn from(val: Light) -> Self {
+        Node::Light(val)
     }
 }
 
@@ -203,6 +194,12 @@ impl Into<Node> for Light {
 pub struct Transformation {
     transform: Transform,
     children: Vec<Node>,
+}
+
+impl Default for Transformation {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Transformation {
@@ -230,8 +227,8 @@ impl Transformation {
     }
 }
 
-impl Into<Node> for Transformation {
-    fn into(self) -> Node {
-        Node::Transformation(self)
+impl From<Transformation> for Node {
+    fn from(val: Transformation) -> Self {
+        Node::Transformation(val)
     }
 }

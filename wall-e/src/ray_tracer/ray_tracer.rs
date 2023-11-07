@@ -60,7 +60,6 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             }
         }
 
-
         Some(nearest.clone())
     }
 
@@ -86,7 +85,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     fn ray_geometry_intersections(&mut self, ray: &Ray) -> Vec<Intersection> {
         let mut intersections = Vec::<Intersection>::new();
         for geometry in self.scene.geometry() {
-            if let Some(intersection) = geometry.intersect(&ray) {
+            if let Some(intersection) = geometry.intersect(ray) {
                 intersections.push(intersection)
             }
         }
@@ -119,7 +118,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 
         // Convert the Camera coordinates to World coordinates.
         let pixel_world_pos = self.camera.camera_to_world_mat() * pixel_camera_pos.push(1.0);
-        
+
         pixel_world_pos.xyz()
     }
 }

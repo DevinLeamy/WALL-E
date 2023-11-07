@@ -56,7 +56,7 @@ impl Buffer for PngImage {
     }
 
     fn get(&self, x: u32, y: u32) -> Self::Value {
-        let rgb = self.buffer.get_pixel(x, y).clone().0;
+        let rgb = self.buffer.get_pixel(x, y).0;
         Self::Value::new(
             rgb[0] as f32 / 255.0,
             rgb[1] as f32 / 255.0,
@@ -70,8 +70,8 @@ fn test() {
     // Completely unnecessary test but hey - who doesn't like rainbow squares!
     let mut image = PngImage::new(500, 500);
 
-    for i in 0..500 as u32 {
-        for j in 0..500 as u32 {
+    for i in 0..500_u32 {
+        for j in 0..500_u32 {
             image.set(i, j, Vector3::new(i as f32 / 500.0, j as f32 / 500.0, 0.5));
         }
     }

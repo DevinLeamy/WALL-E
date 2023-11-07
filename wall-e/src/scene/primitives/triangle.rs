@@ -1,11 +1,8 @@
-use std::mem::swap;
-
-use nalgebra::{SimdBool, Unit, Vector3};
+use nalgebra::Vector3;
 
 use crate::{
     prelude::{Intersection, Ray},
     scene::Collidable,
-    utils::opposite_sign,
 };
 
 #[derive(Clone, Debug)]
@@ -23,7 +20,7 @@ impl Triangle {
 }
 
 impl Collidable for Triangle {
-    fn intersect(&self, ray: &Ray) -> Option<Intersection> {
+    fn intersect(&self, _ray: &Ray) -> Option<Intersection> {
         todo!()
         // Some(Intersection::new(ray.clone(), None, t, normal))
     }

@@ -1,11 +1,8 @@
-use std::mem::swap;
-
-use nalgebra::{SimdBool, Unit, Vector3};
+use nalgebra::Unit;
 
 use crate::{
     prelude::{Intersection, Ray},
     scene::Collidable,
-    utils::opposite_sign,
 };
 
 #[derive(Clone, Debug)]

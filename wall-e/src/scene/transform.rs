@@ -1,4 +1,4 @@
-use nalgebra::{Matrix3, Matrix4, Rotation3, Vector3, U3};
+use nalgebra::{Matrix3, Matrix4, Rotation3, Vector3};
 
 #[derive(Clone, Debug)]
 pub struct Transform {
@@ -32,15 +32,15 @@ impl Transform {
         self.rotation = v;
     }
 
-    pub fn rotate_x(&mut self, rad: f32) {
+    pub fn rotate_x(&mut self, _rad: f32) {
         todo!()
     }
 
-    pub fn rotate_y(&mut self, rad: f32) {
+    pub fn rotate_y(&mut self, _rad: f32) {
         todo!()
     }
 
-    pub fn rotate_z(&mut self, rad: f32) {
+    pub fn rotate_z(&mut self, _rad: f32) {
         todo!()
     }
 

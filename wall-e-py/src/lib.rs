@@ -8,19 +8,19 @@ use wall_e::prelude::{
     Scene, Sphere, Transformation,
 };
 
-const MESH_PATH: &'static str = "./wall-e-py/assets/meshes/";
+const MESH_PATH: &str = "./wall-e-py/assets/meshes/";
 
 enum PrimitiveType {
     Sphere,
     Cube,
 }
 
-impl Into<PrimitiveType> for &str {
-    fn into(self) -> PrimitiveType {
-        match self {
+impl From<&str> for PrimitiveType {
+    fn from(val: &str) -> Self {
+        match val {
             "sphere" => PrimitiveType::Sphere,
             "cube" => PrimitiveType::Cube,
-            _ => panic!("invalid primitive type: {self}"),
+            _ => panic!("invalid primitive type: {val}"),
         }
     }
 }

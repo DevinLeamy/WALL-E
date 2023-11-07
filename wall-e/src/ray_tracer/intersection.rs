@@ -48,7 +48,7 @@ impl Intersection {
     }
 
     pub fn normal(&self) -> Unit<Vector3<f32>> {
-        self.normal.clone()
+        self.normal
     }
 
     pub fn ray(&self) -> Ray {

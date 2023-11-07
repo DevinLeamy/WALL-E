@@ -42,7 +42,7 @@ impl Camera {
     }
 
     pub fn origin(&self) -> Vector3<f32> {
-        self.position.clone()
+        self.position
     }
 
     pub fn fov(&self) -> f32 {
