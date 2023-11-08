@@ -26,7 +26,7 @@ s3.scale(1000, 1000, 1000)
 s3.translate(0, -1200, -500)
 scene_root.add_child(s3)
 
-b1 = Geometry('sphere')
+b1 = Geometry('cube')
 b1.set_material(mat4)
 b1.scale(100, 100, 100)
 b1.translate(-200, -125, 0)
@@ -48,20 +48,20 @@ steldodec = Mesh('smstdodeca.obj')
 steldodec.set_material(mat3)
 scene_root.add_child(steldodec)
 
-white_light = Light()
+white_light = Light((0.9, 0.9, 0.9), (1.0, 0, 0))
 white_light.translate(-100.0, 150.0, 400.0)
 
-magenta_light = Light()
+magenta_light = Light((0.7, 0, 0.7), (1, 0, 0))
 magenta_light.translate(400.0, 100.0, 150.0)
 
 scene_root.add_child(white_light)
 scene_root.add_child(magenta_light)
-camera = Camera((0, 0, 800), (0, 0, -1), (0, 1, 0), 90)
+camera = Camera((0, 0, 800), (0, 0, -1), (0, 1, 0), 50)
 
 scene = Scene()
 scene.set_root(scene_root)
 
-ray_trace(scene, camera, 150, 150, "image.png")
-# ray_trace(scene, camera, 256, 256, "image.png")
+# ray_trace(scene, camera, 150, 150, "image.png")
+ray_trace(scene, camera, 256, 256, "image.png")
 
 copy_and_archive_image()
