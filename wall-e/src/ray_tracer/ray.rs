@@ -29,6 +29,11 @@ impl Ray {
         self.origin + self.direction.into_inner() * t
     }
 
+    pub fn t(&self, point: &Vector3<f32>) -> f32 {
+        let dist = point - self.origin;
+        dist.magnitude()
+    }
+
     pub fn into_inverse_transform_ray(&self, transform: &Transform) -> Self {
         let p1 = self.origin.push(1.0);
         let p2 = (self.origin + self.direction.into_inner()).push(1.0);

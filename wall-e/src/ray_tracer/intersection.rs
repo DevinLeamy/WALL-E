@@ -56,10 +56,13 @@ impl Intersection {
     }
 
     pub fn apply_transforms(self, transform: &Transform) -> Self {
+        let ray = self.ray.into_transformed_ray(transform);
+        let point = (transform.as_mat4() * self.ray.point(self.t).push(1.0)).xyz();
+
         Self {
-            t: self.t,
+            t: ray.t(&point),
             material: self.material,
-            ray: self.ray.into_transformed_ray(transform),
+            ray,
             normal: transform_normal(self.normal, transform),
         }
     }

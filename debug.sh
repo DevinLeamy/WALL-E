@@ -9,4 +9,4 @@ maturin develop
 
 cd ..
 
-time python3 "$1"
+time python3 "./scripts/$1.py"

@@ -59,18 +59,17 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     fn cast_primary_ray(&mut self, ray: Ray) -> Option<Intersection> {
-        let intersections = self.ray_geometry_intersections(&ray);
-        if intersections.is_empty() {
-            return None;
-        }
-        let mut nearest: &Intersection = &intersections[0];
-        for i in 1..intersections.len() {
-            if intersections[i].t() < nearest.t() {
-                nearest = &intersections[i];
+        let mut nearest: Option<Intersection> = None;
+
+        for geometry in self.scene.geometry() {
+            if let Some(intersection) = geometry.intersect(&ray) {
+                if nearest.is_none() || nearest.as_ref().unwrap().t() > intersection.t() {
+                    nearest = Some(intersection);
+                }
             }
         }
 
-        Some(nearest.clone())
+        nearest
     }
 
     fn light_contribution_at_intersection(
@@ -90,17 +89,6 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         );
 
         light
-    }
-
-    fn ray_geometry_intersections(&mut self, ray: &Ray) -> Vec<Intersection> {
-        let mut intersections = Vec::<Intersection>::new();
-        for geometry in self.scene.geometry() {
-            if let Some(intersection) = geometry.intersect(ray) {
-                intersections.push(intersection)
-            }
-        }
-
-        intersections
     }
 
     fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {

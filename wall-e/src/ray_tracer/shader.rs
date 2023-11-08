@@ -2,7 +2,7 @@ use nalgebra::{Unit, Vector3};
 
 use crate::prelude::PhongMaterial;
 
-const DEFAULT_AMBIENT_INTENSITY: Vector3<f32> = Vector3::<f32>::new(0.2, 0.2, 0.2);
+const DEFAULT_AMBIENT_INTENSITY: Vector3<f32> = Vector3::<f32>::new(0.3, 0.3, 0.3);
 
 pub fn phong_illumination(
     // Surface normal at the point of intersection.
@@ -28,10 +28,10 @@ pub fn phong_illumination(
             viewer_light.z / viewer_light_abs.z,
         ));
 
-        specular = f32::max(0.0, normal.dot(&h).powf(material.shininess())) * material.specular();
+        // specular = f32::max(0.0, normal.dot(&h).powf(material.shininess())) * material.specular();
     }
     // println!("DIFF: {:?}", diffuse);
     // println!("SPEC: {:?}", specular);
 
-    DEFAULT_AMBIENT_INTENSITY + 0.5 * (diffuse + specular)
+    DEFAULT_AMBIENT_INTENSITY + 0.5 * diffuse + specular
 }

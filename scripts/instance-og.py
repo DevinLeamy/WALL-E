@@ -2,7 +2,7 @@ from wall_e_py import Mesh, Scene, Transform, Geometry, Light, ray_trace, Camera
 from shared import copy_and_archive_image
 
 stone = Material((0.8, 0.7, 0.7), (0.0, 0.0, 0.0), 0)
-grass = Material((0.1, 0.7, 0.1), (0.0, 0.0, 0.0), 0)
+grass = Material((0.1, 0.9, 0.1), (0.0, 0.0, 0.0), 0)
 scene = Scene()
 
 n_scene = Transform()
@@ -11,11 +11,10 @@ n_scene.rotate('X', 23)
 plane = Mesh('plane.obj')
 plane.set_material(grass)
 plane.scale(30, 30, 30)
-# plane.scale(30, 30, 30)
 n_scene.add_child(plane)
 
-sphere = Geometry('sphere')
-sphere.scale(2.5, 2.5, 2.5)
+sphere = Mesh('buckyball.obj')
+sphere.scale(1.5, 1.5, 1.5)
 sphere.set_material(stone)
 n_scene.add_child(sphere)
 
@@ -42,7 +41,7 @@ for i in range(6):
     arc.add_child(s)
 
     n_arc = Transform()
-    n_arc.rotate('Y', i * 60)
+    n_arc.rotate('Y', (i-1) * 60)
     n_arc.add_child(arc)
     n_scene.add_child(n_arc)
 
@@ -55,4 +54,6 @@ scene.set_root(n_scene)
 
 copy_and_archive_image()
 
-ray_trace(scene, camera, 256, 256, "image.png")
+# ray_trace(scene, camera, 256, 256, "image.png")
+ray_trace(scene, camera, 1000, 1000, "image.png")
+# ray_trace(scene, camera, 100, 100, "image.png")

@@ -9,4 +9,4 @@ maturin develop > /dev/null 2>&1
 
 cd ..
 
-python3 "$1"
+python3 "./scripts/$1.py"

@@ -22,9 +22,8 @@ impl Cube {
 
 impl Cube {
     fn is_inside(&self, point: &Vector3<f32>) -> bool {
-        let half_size = self.size / 2.0;
-        let min = Vector3::new(-half_size, -half_size, -half_size);
-        let max = Vector3::new(half_size, half_size, half_size);
+        let min = Vector3::zeros();
+        let max = Vector3::new(self.size, self.size, self.size);
 
         point.ge(&min).all() && point.le(&max).all()
     }
@@ -32,20 +31,19 @@ impl Cube {
 
 impl Collidable for Cube {
     fn intersect(&self, ray: &Ray) -> Option<Intersection> {
-        let half_size = self.size / 2.0;
         let (origin, direction) = (ray.origin(), ray.direction());
         if self.is_inside(&origin) {
             return None;
         }
 
-        let mut tmin = (-half_size - origin.x) / direction.x;
-        let mut tmax = (half_size - origin.x) / direction.x;
+        let mut tmin = -origin.x / direction.x;
+        let mut tmax = (self.size - origin.x) / direction.x;
         if tmin > tmax {
             swap(&mut tmin, &mut tmax);
         }
 
-        let mut tmin_y = (-half_size - origin.y) / direction.y;
-        let mut tmax_y = (half_size - origin.y) / direction.y;
+        let mut tmin_y = -origin.y / direction.y;
+        let mut tmax_y = (self.size - origin.y) / direction.y;
         if tmin_y > tmax_y {
             swap(&mut tmin_y, &mut tmax_y);
         }
@@ -57,8 +55,8 @@ impl Collidable for Cube {
         tmin = f32::max(tmin, tmin_y);
         tmax = f32::min(tmax, tmax_y);
 
-        let mut tmin_z = (-half_size - origin.z) / direction.z;
-        let mut tmax_z = (half_size - origin.z) / direction.z;
+        let mut tmin_z = -origin.z / direction.z;
+        let mut tmax_z = (self.size - origin.z) / direction.z;
         if tmin_z > tmax_z {
             swap(&mut tmin_z, &mut tmax_z);
         }
