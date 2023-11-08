@@ -11,5 +11,5 @@ pub fn opposite_sign(n: f32) -> f32 {
 }
 
 pub fn transform_normal(normal: Unit<Vector3<f32>>, transform: &Transform) -> Unit<Vector3<f32>> {
-    Unit::new_normalize(transform.as_mat3() * normal.into_inner())
+    Unit::new_normalize(transform.as_mat3_inverse() * normal.into_inner())
 }

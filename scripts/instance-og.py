@@ -1,8 +1,8 @@
 from wall_e_py import Mesh, Scene, Transform, Geometry, Light, ray_trace, Camera, Material
 from shared import copy_and_archive_image
 
-stone = Material((0.8, 0.7, 0.7), (0.0, 0.0, 0.0), 0)
-grass = Material((0.1, 0.9, 0.1), (0.0, 0.0, 0.0), 0)
+stone = Material((0.949, 0.91, 0.761), (0.5, 0.5, 0.5), 1)
+grass = Material((0.0, 1.0, 0.0), (0.0, 0.0, 0.0), 0.0)
 scene = Scene()
 
 n_scene = Transform()
@@ -41,12 +41,13 @@ for i in range(6):
     arc.add_child(s)
 
     n_arc = Transform()
-    n_arc.rotate('Y', (i-1) * 60)
+    n_arc.rotate('Y', i * 60)
     n_arc.add_child(arc)
     n_scene.add_child(n_arc)
 
 light = Light()
 light.translate(200, 202, 430)
+# light.translate(0, 202, 0)
 
 n_scene.add_child(light)
 camera = Camera((0, 2, 30), (0, 0, -1), (0, 1, 0), 50)
@@ -54,6 +55,6 @@ scene.set_root(n_scene)
 
 copy_and_archive_image()
 
-# ray_trace(scene, camera, 256, 256, "image.png")
-ray_trace(scene, camera, 1000, 1000, "image.png")
+ray_trace(scene, camera, 256, 256, "image.png")
+# ray_trace(scene, camera, 1000, 1000, "image.png")
 # ray_trace(scene, camera, 100, 100, "image.png")

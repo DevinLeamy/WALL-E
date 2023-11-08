@@ -102,9 +102,17 @@ impl Transform {
         translation_matrix * rotation_matrix * scale_matrix
     }
 
-    pub fn as_mat3(&self) -> Matrix3<f32> {
-        // Order: R - S
-        let m4 = self.as_mat4();
+    pub fn as_mat3_inverse(&self) -> Matrix3<f32> {
+        let reciprocal_scale = Vector3::new(
+            1.0 / self.scale.x,
+            1.0 / self.scale.y,
+            1.0 / self.scale.z,
+        );
+        let scale_matrix = Matrix4::new_nonuniform_scaling(&reciprocal_scale);
+        let rotation_matrix = rotation_to_rot3(self.rotation).matrix().to_homogeneous();
+
+        // Order: S - R
+        let m4 = scale_matrix * rotation_matrix;
         let m3_view = m4.fixed_slice::<3, 3>(0, 0);
         let m = Matrix3::from_iterator(m3_view.iter().cloned());
 
