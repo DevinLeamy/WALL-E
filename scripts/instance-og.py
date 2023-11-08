@@ -1,7 +1,7 @@
 from wall_e_py import Mesh, Scene, Transform, Geometry, Light, ray_trace, Camera, Material
 from shared import copy_and_archive_image
 
-stone = Material((0.949, 0.91, 0.761), (0.5, 0.5, 0.5), 1)
+stone = Material((1.0, 0.81, 0.501), (0.5, 0.5, 0.5), 10)
 grass = Material((0.0, 1.0, 0.0), (0.0, 0.0, 0.0), 0.0)
 scene = Scene()
 
@@ -46,8 +46,8 @@ for i in range(6):
     n_scene.add_child(n_arc)
 
 light = Light()
-light.translate(200, 202, 430)
-# light.translate(0, 202, 0)
+# light.translate(200, 202, 430)
+light.translate(100, 202, 0)
 
 n_scene.add_child(light)
 camera = Camera((0, 2, 30), (0, 0, -1), (0, 1, 0), 50)

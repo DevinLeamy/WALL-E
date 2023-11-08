@@ -87,6 +87,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             viewer_ray,
             intersection.material(),
         );
+        // println!("{:?}", light);
 
         light
     }

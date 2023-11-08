@@ -1,7 +1,7 @@
 from wall_e_py import Mesh, Scene, Transform, Geometry, Light, ray_trace, Camera, Material
 from shared import copy_and_archive_image
 
-red = Material((1.0, 0.0, 0.0), (0.1, 0.1, 0.1), 1.0)
+red = Material((1.0, 0.0, 0.0), (0.5, 0.5, 0.5), 10.0)
 green = Material((0.4, 1.0, 0.4), (0.5, 0.5, 0.5), 1.0)
 blue = Material((0.1, 0.1, 1.0), (0.5, 0.5, 0.5), 0.8)
 scene = Scene()
@@ -27,18 +27,18 @@ g3.translate(0.0, 2.0, 0.0)
 g3.scale(1.0, 2.0, 1.0)
 g3.set_material(red)
 
-# cow = Mesh("cow.obj")
+# cow = Geometry("sphere")
 cow = Mesh("buckyball.obj")
 cow.translate(0.0, 0.0, 2.0)
-cow.scale(1.0, 1.0, 1.0)
+# cow.scale(3.0, 3.0, 3.0)
 cow.set_material(red)
 
 light = Light()
-light.translate(2.0, 4.0, 8.0)
+light.translate(200.0, 200.0, 400.0)
 
-root.add_child(g1)
-root.add_child(g2)
-root.add_child(g3)
+# root.add_child(g1)
+# root.add_child(g2)
+# root.add_child(g3)
 root.add_child(cow)
 root.add_child(light)
 
