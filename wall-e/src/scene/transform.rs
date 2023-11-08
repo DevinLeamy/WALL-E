@@ -1,5 +1,7 @@
 use nalgebra::{Matrix3, Matrix4, Rotation3, Vector3};
 
+use crate::utils::vector_mul;
+
 #[derive(Clone, Debug)]
 pub struct Transform {
     rotation: Vector3<f32>,
@@ -74,11 +76,7 @@ impl Transform {
 
     /// Apply the given transform to self and return the new transform.
     pub fn transform(&self, transform: &Transform) -> Transform {
-        let new_scale = Vector3::new(
-            self.scale.x * transform.scale.x,
-            self.scale.y * transform.scale.y,
-            self.scale.z * transform.scale.z,
-        );
+        let new_scale = vector_mul(&self.scale, &transform.scale);
         let current_rotation = rotation_to_rot3(self.rotation);
         let other_rotation = rotation_to_rot3(transform.rotation);
         let new_rot3 = current_rotation * other_rotation;
@@ -103,11 +101,8 @@ impl Transform {
     }
 
     pub fn as_mat3_inverse(&self) -> Matrix3<f32> {
-        let reciprocal_scale = Vector3::new(
-            1.0 / self.scale.x,
-            1.0 / self.scale.y,
-            1.0 / self.scale.z,
-        );
+        let reciprocal_scale =
+            Vector3::new(1.0 / self.scale.x, 1.0 / self.scale.y, 1.0 / self.scale.z);
         let scale_matrix = Matrix4::new_nonuniform_scaling(&reciprocal_scale);
         let rotation_matrix = rotation_to_rot3(self.rotation).matrix().to_homogeneous();
 

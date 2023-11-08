@@ -1,27 +1,23 @@
 from wall_e_py import Mesh, Scene, Transform, Geometry, Light, ray_trace, Camera, Material
 from shared import copy_and_archive_image
 
-# Define materials
 stone = Material((0.8, 0.7, 0.7), (0.0, 0.0, 0.0), 0)
 grass = Material((0.1, 0.7, 0.1), (0.0, 0.0, 0.0), 0)
 hide = Material((0.84, 0.6, 0.53), (0.3, 0.3, 0.3), 20)
 
-# Define the scene root node
 scene_root = Transform()
+scene_root.rotate('X', 23)
 
-# Create a grass plane
 plane = Mesh('plane.obj')
 plane.set_material(grass)
 plane.scale(30, 30, 30)
 scene_root.add_child(plane)
 
-# Create and place the buckyball
 buckyball = Mesh('buckyball.obj')
 buckyball.set_material(stone)
 buckyball.scale(1.5, 1.5, 1.5)
 scene_root.add_child(buckyball)
 
-# Define the arc elements (part of Stonehenge in the scene)
 arc = Transform()
 arc.translate(0, 0, -10)
 
@@ -43,14 +39,13 @@ s.scale(4, 0.6, 0.6)
 s.translate(0, 4, 0)
 arc.add_child(s)
 
-# Place the arches in a circle
 for i in range(6):
     arch_instance = Transform()
     arch_instance.rotate('Y', i * 60)
     arch_instance.add_child(arc)
     scene_root.add_child(arch_instance)
 
-# Define the cow model
+
 def create_cow():
     cow = Transform()
     parts = [
@@ -63,7 +58,7 @@ def create_cow():
         ("rfleg", (0.7, -0.7, 0.7), 0.3),
         ("rrleg", (-0.7, -0.7, 0.7), 0.3),
     ]
-    
+
     for name, position, scale in parts:
         part = Geometry("sphere")
         part.set_material(hide)
@@ -73,8 +68,9 @@ def create_cow():
 
     return cow
 
-# Place cows in the scene using the instanced cow model
-cow_positions = [((1, 1.3, 14), 20), ((5, 1.3, -11), 180), ((-5.5, 1.3, -3), -60)]
+
+cow_positions = [((1, 1.3, 14), 20), ((5, 1.3, -11), 180),
+                 ((-5.5, 1.3, -3), -60)]
 for position, rotation in cow_positions:
     cow_instance = Transform()
     cow_instance.add_child(create_cow())
@@ -83,22 +79,17 @@ for position, rotation in cow_positions:
     cow_instance.translate(position[0], position[1], position[2])
     scene_root.add_child(cow_instance)
 
-# Add light to the scene
-light_source = Light()
+light_source = Light((0.8, 0.8, 0.8), (1, 0, 0))
 light_source.translate(200, 202, 430)
-#, (0.8, 0.8, 0.8), (1, 0, 0))
 scene_root.add_child(light_source)
 
-# Define the camera
-camera = Camera((0, 30, 30), (0, 0, -1), (0, 1, 0), 50)
-camera.look_at(0, 0, 0)
+camera = Camera((0, 2, 30), (0, 0, -1), (0, 1, 0), 50)
 
-# Create the scene object and set the root
 scene = Scene()
 scene.set_root(scene_root)
+scene.set_ambient(0.4, 0.4, 0.4)
 
-# Render the scene
-
-ray_trace(scene, camera, 256, 256, "image.png")
+# ray_trace(scene, camera, 256, 256, "image.png")
+ray_trace(scene, camera, 900, 900, "image.png")
 
 copy_and_archive_image()

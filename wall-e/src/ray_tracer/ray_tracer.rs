@@ -99,33 +99,27 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         );
         let light_t = ray.t(&light.transform().translation());
 
-        let mut illuminate = true;
+        let mut in_shadow = false;
         for geometry in self.scene.geometry() {
             if let Some(intersection) = geometry.intersect(&ray) {
                 if intersection.t() < light_t {
-                    illuminate = false;
+                    in_shadow = true;
                     break;
                 }
             }
         }
 
-        if illuminate {
-            let viewer_ray = -intersection.ray().direction();
-            let normal = intersection.normal();
-
-            let light = super::shader::phong_illumination(
-                normal,
-                light_ray,
-                viewer_ray,
-                intersection.material(),
-                self.scene.ambient(),
-            );
-
-            // println!("{:?}", light);
-            light
-        } else {
-            self.scene.ambient().clone()
-        }
+        super::shader::phong_illumination(
+            self.camera.origin(),
+            intersection.point(),
+            light.transform().translation(),
+            intersection.normal(),
+            intersection.material(),
+            self.scene.ambient(),
+            light.colour(),
+            light.attenuation(),
+            in_shadow,
+        )
     }
 
     fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {
