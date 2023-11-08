@@ -28,10 +28,15 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         let total_pixels = self.buffer.width() * self.buffer.height();
         let mut traced = 0;
 
+        let lights = self.scene.lights().clone();
+
         for x in 0..self.buffer.width() {
             for y in 0..self.buffer.height() {
                 traced += 1;
-                println!("⏳ Completed {:.1}%", traced as f32 / total_pixels as f32 * 100.0);
+                println!(
+                    "⏳ Completed {:.1}%",
+                    traced as f32 / total_pixels as f32 * 100.0
+                );
                 let pixel_pos = self.compute_pixel_position(x, y);
                 let ray = Ray::from_points(self.camera.origin(), pixel_pos);
 
@@ -43,7 +48,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                 // Compute the light at the point of intersection by casting secondary, shadow,
                 // rays directly towards the lights in the scene.
                 let mut total_light = Vector3::<f32>::zeros();
-                for light in self.scene.lights() {
+                for light in &lights {
                     total_light += self.light_contribution_at_intersection(light, &intersection);
                 }
                 // println!("({:?}) TOTAL LIGHT: {:?}", self.scene.lights().len(), total_light);
@@ -73,23 +78,40 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     }
 
     fn light_contribution_at_intersection(
-        &self,
+        &mut self,
         light: &Light,
         intersection: &Intersection,
     ) -> Vector3<f32> {
         let light_ray = Unit::new_normalize(light.transform().translation() - intersection.point());
-        let viewer_ray = -intersection.ray().direction();
-        let normal = intersection.normal();
+        let ray = Ray::from_points(intersection.point() + light_ray.into_inner() * 0.1, light.transform().translation());
+        let light_t = ray.t(&light.transform().translation());
 
-        let light = super::shader::phong_illumination(
-            normal,
-            light_ray,
-            viewer_ray,
-            intersection.material(),
-        );
-        // println!("{:?}", light);
+        let mut illuminate = true;
+        for geometry in self.scene.geometry() {
+            if let Some(intersection) = geometry.intersect(&ray) {
+                if intersection.t() < light_t {
+                    illuminate = false;
+                    break;
+                }
+            }
+        }
 
-        light
+        if illuminate {
+            let viewer_ray = -intersection.ray().direction();
+            let normal = intersection.normal();
+
+            let light = super::shader::phong_illumination(
+                normal,
+                light_ray,
+                viewer_ray,
+                intersection.material(),
+            );
+
+            // println!("{:?}", light);
+            light
+        } else {
+            Vector3::zeros()
+        }
     }
 
     fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {
