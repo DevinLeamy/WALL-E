@@ -35,7 +35,17 @@ pub fn node_methods_derive(input: TokenStream) -> TokenStream {
             fn translate(&mut self, x: f32, y: f32, z: f32) {
                 self.inner.transform_mut().translate(Vector3::new(x, y, z));
             }
-    }
+
+            fn rotate(&mut self, axis: &str, degrees: f32) {
+                let rad = degrees.to_radians();
+                match axis {
+                    "x" | "X" => self.inner.transform_mut().rotate_x(rad),
+                    "y" | "Y" => self.inner.transform_mut().rotate_y(rad),
+                    "z" | "Z" => self.inner.transform_mut().rotate_z(rad),
+                    _ => panic!("Invalid axis: {axis}")
+                }
+            }
+        }
     };
 
     TokenStream::from(expanded)

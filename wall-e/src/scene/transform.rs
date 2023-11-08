@@ -32,16 +32,16 @@ impl Transform {
         self.rotation = v;
     }
 
-    pub fn rotate_x(&mut self, _rad: f32) {
-        todo!()
+    pub fn rotate_x(&mut self, rad: f32) {
+        self.rotation.x += rad;
     }
 
-    pub fn rotate_y(&mut self, _rad: f32) {
-        todo!()
+    pub fn rotate_y(&mut self, rad: f32) {
+        self.rotation.y += rad;
     }
 
-    pub fn rotate_z(&mut self, _rad: f32) {
-        todo!()
+    pub fn rotate_z(&mut self, rad: f32) {
+        self.rotation.z += rad;
     }
 
     pub fn scale(&self) -> Vector3<f32> {
@@ -95,11 +95,11 @@ impl Transform {
 
     pub fn as_mat4(&self) -> Matrix4<f32> {
         // Order: T - R - S
-        let mut m = Matrix4::<f32>::identity();
-        m.prepend_nonuniform_scaling_mut(&self.scale);
-        m.prepend_translation_mut(&self.translation);
+        let scale_matrix = Matrix4::new_nonuniform_scaling(&self.scale);
+        let rotation_matrix = rotation_to_rot3(self.rotation).matrix().to_homogeneous();
+        let translation_matrix = Matrix4::new_translation(&self.translation);
 
-        m
+        translation_matrix * rotation_matrix * scale_matrix
     }
 
     pub fn as_mat3(&self) -> Matrix3<f32> {
@@ -113,7 +113,7 @@ impl Transform {
 }
 
 fn rotation_to_rot3(rotation: Vector3<f32>) -> Rotation3<f32> {
-    Rotation3::from_euler_angles(rotation.x, rotation.y, rotation.y)
+    Rotation3::from_euler_angles(rotation.x, rotation.y, rotation.z)
 }
 
 fn rot3_to_rotation(r: Rotation3<f32>) -> Vector3<f32> {

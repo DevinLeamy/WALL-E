@@ -27,7 +27,7 @@ s.translate(0, 4, 0)
 arc.add_child(s)
 
 n_scene = Transform()
-# n_scene:rotate('X', 23)
+n_scene.rotate('X', 23)
 
 plane = Mesh('plane.obj')
 plane.set_material(grass)
@@ -40,10 +40,10 @@ sphere.set_material(stone)
 n_scene.add_child(sphere)
 
 for i in range(6):
-   n_arc = Transform()
-#    n_arc.rotate('Y', (i-1) * 60)
-   n_scene.add_child(n_arc)
-   n_arc.add_child(arc)
+    n_arc = Transform()
+    n_arc.rotate('Y', (i-1) * 60)
+    n_scene.add_child(n_arc)
+    n_arc.add_child(arc)
 
 n_scene.add_child(arc)
 
@@ -58,6 +58,3 @@ scene.set_root(n_scene)
 copy_and_archive_image()
 
 ray_trace(scene, camera, 256, 256, "image.png")
-	#   'instance.png', 256, 256,
-	#   {0, 2, 30}, {0, 0, -1}, {0, 1, 0}, 50,
-	#   {0.4, 0.4, 0.4}, {gr.light({200, 202, 430}, {0.8, 0.8, 0.8}, {1, 0, 0})})

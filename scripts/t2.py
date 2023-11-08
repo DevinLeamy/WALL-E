@@ -12,14 +12,15 @@ root.translate(0.0, 0.0, 0.0)
 
 # geometry = Geometry("sphere")
 g1 = Geometry("cube")
-g1.translate(-2.0, 0.0, 0.0)
-g1.scale(2.0, 1.0, 1.0)
+g1.translate(-2.0, 1.0, 0.0)
+g1.scale(1.0, 1.0, 1.0)
 g1.set_material(green)
 
 g2 = Geometry("cube")
 g2.translate(2.0, 0.0, 0.0)
 g2.scale(1.0, 2.0, 1.0)
 g2.set_material(blue)
+g2.rotate('y', 45)
 
 g3 = Geometry("sphere")
 g3.translate(0.0, 2.0, 0.0)
@@ -28,22 +29,20 @@ g3.set_material(red)
 
 # cow = Mesh("cow.obj")
 cow = Mesh("buckyball.obj")
-cow.translate(0.0, 0.0, 0.0)
+cow.translate(0.0, 0.0, 2.0)
 cow.scale(1.0, 1.0, 1.0)
 cow.set_material(red)
 
-
 light = Light()
-light.translate(2.0, 4.0, -8.0)
+light.translate(2.0, 4.0, 8.0)
 
-# root.add_child(g1)
-# root.add_child(g2)
-# root.add_child(g3)
+root.add_child(g1)
+root.add_child(g2)
+root.add_child(g3)
 root.add_child(cow)
 root.add_child(light)
 
-camera = Camera((0, 0, 5.0), (0, 0, -1), (0, 1, 0), 50)
-camera.set_position(0.0, 2.0, -15.0)
+camera = Camera((0, 2.0, 15.0), (0, 0, -1), (0, 1, 0), 50)
 camera.look_at(0.0, 1.0, 0.0)
 
 scene.set_root(root)
