@@ -36,7 +36,7 @@ impl Collidable for Triangle {
         let to_origin = ray.origin() - self.p1;
         let u = inv_det * to_origin.dot(&cross_dir_edge2);
 
-        if u < 0.0 || u > 1.0 {
+        if !(0.0..=1.0).contains(&u) {
             return None;
         }
 
