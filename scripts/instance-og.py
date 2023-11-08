@@ -2,7 +2,7 @@ from wall_e_py import Mesh, Scene, Transform, Geometry, Light, ray_trace, Camera
 from shared import copy_and_archive_image
 
 stone = Material((1.0, 0.81, 0.501), (0.5, 0.5, 0.5), 10)
-grass = Material((0.0, 1.0, 0.0), (0.0, 0.0, 0.0), 0.0)
+grass = Material((0.1, 0.7, 0.1), (0.0, 0.0, 0.0), 0.0)
 scene = Scene()
 
 n_scene = Transform()
