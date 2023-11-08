@@ -55,6 +55,6 @@ scene.set_root(n_scene)
 copy_and_archive_image()
 
 # ray_trace(scene, camera, 256, 256, "image.png")
-# ray_trace(scene, camera, 600, 600, "image.png")
+ray_trace(scene, camera, 600, 600, "image.png")
 # ray_trace(scene, camera, 1000, 1000, "image.png")
-ray_trace(scene, camera, 100, 100, "image.png")
+# ray_trace(scene, camera, 100, 100, "image.png")

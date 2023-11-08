@@ -2,7 +2,7 @@ use nalgebra::{Unit, Vector3};
 
 use crate::prelude::PhongMaterial;
 
-const DEFAULT_AMBIENT_INTENSITY: Vector3<f32> = Vector3::<f32>::new(0.1, 0.1, 0.1);
+pub const DEFAULT_AMBIENT_INTENSITY: Vector3<f32> = Vector3::<f32>::new(0.1, 0.1, 0.1);
 
 pub fn phong_illumination(
     // Surface normal at the point of intersection.

@@ -4,6 +4,8 @@ use nalgebra::Unit;
 
 use crate::prelude::*;
 
+use super::shader::DEFAULT_AMBIENT_INTENSITY;
+
 const DISTANCE_TO_SCREEN: f32 = 1.0;
 
 pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
@@ -43,7 +45,15 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                 // Cast the primary ray into the scene to intersect with the scene's geometry.
                 let Some(intersection) = self.cast_primary_ray(ray) else {
                     let rr = x as f32 / self.buffer.width() as f32 / 2.0;
-                    self.buffer.set(x, y, Vector3::new(rr, 0.5 - rr, 0.0 + 1.0 - y as f32 / self.buffer.height() as f32));
+                    self.buffer.set(
+                        x,
+                        y,
+                        Vector3::new(
+                            rr,
+                            0.5 - rr,
+                            0.0 + 1.0 - y as f32 / self.buffer.height() as f32,
+                        ),
+                    );
                     continue;
                 };
 
@@ -85,7 +95,10 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         intersection: &Intersection,
     ) -> Vector3<f32> {
         let light_ray = Unit::new_normalize(light.transform().translation() - intersection.point());
-        let ray = Ray::from_points(intersection.point() + light_ray.into_inner() * 0.1, light.transform().translation());
+        let ray = Ray::from_points(
+            intersection.point() + light_ray.into_inner() * 0.1,
+            light.transform().translation(),
+        );
         let light_t = ray.t(&light.transform().translation());
 
         let mut illuminate = true;
@@ -112,7 +125,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             // println!("{:?}", light);
             light
         } else {
-            Vector3::zeros()
+            DEFAULT_AMBIENT_INTENSITY
         }
     }
 
