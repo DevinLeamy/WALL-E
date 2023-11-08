@@ -32,11 +32,16 @@ impl Collidable for Sphere {
         let t = if disc == 0.0 {
             -b / (2.0 * a)
         } else {
-            // TODO: We actually want to smallest value larger than 0.0, because we don't
-            // want to register "internal" collisions.
             let t0 = (-b + disc.sqrt()) / (2.0 * a);
             let t1 = (-b - disc.sqrt()) / (2.0 * a);
-            f32::min(t0, t1)
+
+            if t0 <= 0.0 {
+                t1
+            } else if t1 <= 0.0 {
+                t0
+            } else {
+                f32::min(t0, t1)
+            }
         };
 
         if t <= 0.0 {
