@@ -4,8 +4,6 @@ use nalgebra::Unit;
 
 use crate::prelude::*;
 
-use super::shader::DEFAULT_AMBIENT_INTENSITY;
-
 const DISTANCE_TO_SCREEN: f32 = 1.0;
 
 pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
@@ -120,12 +118,13 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                 light_ray,
                 viewer_ray,
                 intersection.material(),
+                self.scene.ambient(),
             );
 
             // println!("{:?}", light);
             light
         } else {
-            DEFAULT_AMBIENT_INTENSITY
+            self.scene.ambient().clone()
         }
     }
 

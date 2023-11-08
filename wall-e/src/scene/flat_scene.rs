@@ -1,14 +1,21 @@
+use nalgebra::Vector3;
+
 use super::{Geometry, Light, Node, Scene, Transform};
 
 #[derive(Debug)]
 pub struct FlatScene {
     lights: Vec<Light>,
     geometry: Vec<Geometry>,
+    ambient: Vector3<f32>,
 }
 
 impl FlatScene {
-    pub fn new(lights: Vec<Light>, geometry: Vec<Geometry>) -> Self {
-        Self { lights, geometry }
+    pub fn new(lights: Vec<Light>, geometry: Vec<Geometry>, ambient: Vector3<f32>) -> Self {
+        Self {
+            lights,
+            geometry,
+            ambient,
+        }
     }
 }
 
@@ -19,6 +26,10 @@ impl FlatScene {
 
     pub fn lights(&self) -> &Vec<Light> {
         &self.lights
+    }
+
+    pub fn ambient(&self) -> &Vector3<f32> {
+        &self.ambient
     }
 }
 
@@ -60,7 +71,7 @@ impl SceneFlattener {
         let mut flattener = Self::new();
         flattener.traverse_scene(&scene);
 
-        FlatScene::new(flattener.lights, flattener.geometry)
+        FlatScene::new(flattener.lights, flattener.geometry, scene.ambient())
     }
 }
 
@@ -83,8 +94,13 @@ impl SceneFlattener {
         self.pop_transform();
     }
 
-    fn handle_light(&mut self, _light: &Light) {
-        let new_light = Light::new(self.top_transform(), Vec::new());
+    fn handle_light(&mut self, light: &Light) {
+        let new_light = Light::new(
+            self.top_transform(),
+            light.colour().clone(),
+            light.attenuation().clone(),
+            Vec::new(),
+        );
         self.lights.push(new_light);
     }
 

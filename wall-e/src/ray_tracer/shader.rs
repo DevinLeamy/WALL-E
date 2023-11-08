@@ -2,8 +2,6 @@ use nalgebra::{Unit, Vector3};
 
 use crate::prelude::PhongMaterial;
 
-pub const DEFAULT_AMBIENT_INTENSITY: Vector3<f32> = Vector3::<f32>::new(0.1, 0.1, 0.1);
-
 pub fn phong_illumination(
     // Surface normal at the point of intersection.
     normal: Unit<Vector3<f32>>,
@@ -13,6 +11,8 @@ pub fn phong_illumination(
     viewer_ray: Unit<Vector3<f32>>,
     // Surface properties.
     material: &PhongMaterial,
+    // Ambient intensity.
+    ambient: &Vector3<f32>
 ) -> Vector3<f32> {
     let light_dot_normal = f32::max(0.0, normal.dot(&light_ray));
     let diffuse = light_dot_normal * material.diffuse();
@@ -33,5 +33,5 @@ pub fn phong_illumination(
     // println!("DIFF: {:?}", diffuse);
     // println!("SPEC: {:?}", specular);
 
-    DEFAULT_AMBIENT_INTENSITY + diffuse + specular
+    ambient + diffuse + specular
 }

@@ -156,13 +156,18 @@ impl From<Geometry> for Node {
 #[derive(Clone, Debug, Default)]
 pub struct Light {
     transform: Transform,
+    colour: Vector3<f32>,
+    /// Parameters for quadratic attenuation.
+    attenuation: Vector3<f32>,
     children: Vec<Node>,
 }
 
 impl Light {
-    pub fn new(transform: Transform, children: Vec<Node>) -> Self {
+    pub fn new(transform: Transform, colour: Vector3<f32>, attenuation: Vector3<f32>, children: Vec<Node>) -> Self {
         Self {
             transform,
+            colour,
+            attenuation,
             children,
         }
     }
@@ -181,6 +186,14 @@ impl Light {
 
     pub fn add_child(&mut self, child: Node) {
         self.children.push(child);
+    }
+
+    pub fn colour(&self) -> &Vector3<f32> {
+        &self.colour
+    }
+
+    pub fn attenuation(&self) -> &Vector3<f32> {
+        &self.attenuation
     }
 }
 

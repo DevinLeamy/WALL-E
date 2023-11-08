@@ -52,6 +52,10 @@ impl PyScene {
             panic!("add_child only accepts PyGeometry, PyTransform, PyLight, or PyMesh");
         }
     }
+
+    fn set_ambient(&mut self, r: f32, g: f32, b: f32) {
+        self.inner.set_ambient(Vector3::new(r, g, b))
+    }
 }
 
 #[pyfunction]

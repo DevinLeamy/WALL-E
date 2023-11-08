@@ -45,16 +45,17 @@ for i in range(6):
     n_arc.add_child(arc)
     n_scene.add_child(n_arc)
 
-light = Light()
+light = Light((0.8, 0.8, 0.8), (1, 0, 0))
 light.translate(200, 202, 430)
 
 n_scene.add_child(light)
 camera = Camera((0, 2, 30), (0, 0, -1), (0, 1, 0), 50)
 scene.set_root(n_scene)
+scene.set_ambient(0.4, 0.4, 0.4)
 
 copy_and_archive_image()
 
-# ray_trace(scene, camera, 256, 256, "image.png")
-ray_trace(scene, camera, 600, 600, "image.png")
+ray_trace(scene, camera, 256, 256, "image.png")
+# ray_trace(scene, camera, 600, 600, "image.png")
 # ray_trace(scene, camera, 1000, 1000, "image.png")
 # ray_trace(scene, camera, 100, 100, "image.png")
