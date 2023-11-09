@@ -55,4 +55,4 @@ To run a script `./scripts/custom-script.py`, from the root folder, call
 -   `image`: Image processing crate.
 -   `lazy_static`: Utility crate for creating global mutable variables with non-const initialization.
 -   `obj`: Utility crate for loading `obj` files.
--   [maturin](https://github.com/PyO3/maturin): Building python3 module generated using `pyo3`
+-   [maturin](https://github.com/PyO3/maturin): Building python3 module generated using `pyo3`.
