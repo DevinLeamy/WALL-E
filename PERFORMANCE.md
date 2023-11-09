@@ -1,9 +1,10 @@
 # Performance
 
+> _Note: These times were computed before anti-aliasing was implemented._
+
 | Scene (256 x 256) | No Bounding Volumes | Bounding Volumes |
 | ----------------- | ------------------- | ---------------- |
-| macho_cows        | time1_mode1         | 1.36s            |
-| simple_cows       | time2_mode1         | 1.19s            |
-| simple            | time3_mode1         | time3_mode2      |
-| nonhier           | time4_mode1         | 14.38            |
-| macho-cows-bb     | time5_mode1         | time5_mode2      |
+| macho_cows        | 11m 13s             | 1m 36s           |
+| simple_cows       | 1m 30s              | 1m 19s           |
+| sample            | 5m 24s              | 4m 29s           |
+| nonhier           | 25s                 | 17s              |
