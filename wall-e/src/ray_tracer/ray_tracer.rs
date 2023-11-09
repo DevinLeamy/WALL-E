@@ -1,18 +1,24 @@
 use std::time::Instant;
 
 use nalgebra::Unit;
+use rand::{Rng, rngs::ThreadRng};
 
 use crate::prelude::*;
 
 use super::background::PatternedBackground;
 
 const DISTANCE_TO_SCREEN: f32 = 1.0;
+const SAMPLES_PER_PIXEL: u32 = 9;
 
 pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
     buffer: B,
     scene: FlatScene,
     camera: Camera,
     background: PatternedBackground,
+    /// Number of samples per pixel.
+    samples: u32,
+    /// Random number generator.
+    random: ThreadRng
 }
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
@@ -27,6 +33,8 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             buffer,
             scene: scene.into(),
             camera,
+            samples: SAMPLES_PER_PIXEL,
+            random: rand::thread_rng()
         }
     }
 }
@@ -37,8 +45,6 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         let total_pixels = self.buffer.width() * self.buffer.height();
         let mut traced = 0;
 
-        let lights = self.scene.lights().clone();
-
         for x in 0..self.buffer.width() {
             for y in 0..self.buffer.height() {
                 traced += 1;
@@ -46,24 +52,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
                     "⏳ Completed {:.1}%",
                     traced as f32 / total_pixels as f32 * 100.0
                 );
-                let pixel_pos = self.compute_pixel_position(x, y);
-                let ray = Ray::from_points(self.camera.origin(), pixel_pos);
-
-                // Cast the primary ray into the scene to intersect with the scene's geometry.
-                let Some(intersection) = self.cast_primary_ray(ray) else {
-                    self.buffer.set(x, y, self.background.color(x, y));
-                    continue;
-                };
-
-                // Compute the light at the point of intersection by casting secondary, shadow,
-                // rays directly towards the lights in the scene.
-                let mut total_light = Vector3::<f32>::zeros();
-                for light in &lights {
-                    total_light += self.light_contribution_at_intersection(light, &intersection);
-                }
-                // println!("({:?}) TOTAL LIGHT: {:?}", self.scene.lights().len(), total_light);
-
-                self.buffer.set(x, y, total_light);
+                self.color_pixel(x, y);
             }
         }
         let duration = Instant::now().duration_since(start_time);
@@ -73,6 +62,35 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 }
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
+    fn color_pixel(&mut self, x: u32, y: u32) {
+        let mut total_light = Vector3::zeros();
+        for _ in 0..self.samples {
+            let xx = x as f32 + self.random.gen_range(0.0..=1.0) - 0.5;
+            let yy = y as f32 + self.random.gen_range(0.0..=1.0) - 0.5;
+            let pixel_position = self.compute_pixel_position(xx, yy);
+
+            let ray = Ray::from_points(self.camera.origin(), pixel_position);
+
+            // Cast the primary ray into the scene to intersect with the scene's geometry.
+            let Some(intersection) = self.cast_primary_ray(ray) else {
+                total_light += self.background.color(x, y);
+                continue;
+            };
+
+            // Compute the light at the point of intersection by casting secondary, shadow,
+            // rays directly towards the lights in the scene.
+            let mut sample_light = Vector3::<f32>::zeros();
+            for light in self.scene.lights() {
+                sample_light += self.light_contribution_at_intersection(light, &intersection);
+            }
+            // println!("({:?}) TOTAL LIGHT: {:?}", self.scene.lights().len(), total_light);
+            total_light += sample_light;
+        }
+
+        let average_light = 1.0 / (self.samples as f32) * total_light;
+        self.buffer.set(x, y, average_light);
+    }
+
     fn cast_primary_ray(&mut self, ray: Ray) -> Option<Intersection> {
         let mut nearest: Option<Intersection> = None;
 
@@ -88,7 +106,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     }
 
     fn light_contribution_at_intersection(
-        &mut self,
+        &self,
         light: &Light,
         intersection: &Intersection,
     ) -> Vector3<f32> {
@@ -122,14 +140,14 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         )
     }
 
-    fn compute_pixel_position(&mut self, x: u32, y: u32) -> Vector3<f32> {
+    fn compute_pixel_position(&mut self, x: f32, y: f32) -> Vector3<f32> {
         let d = DISTANCE_TO_SCREEN;
 
         // Convert the pixel coordinates to NDC coordinates.
         //
         // We add 0.5 to x and y to get the center of the pixel.
-        let ndc_x = (x as f32 + 0.5) / self.buffer.width() as f32;
-        let ndc_y = (y as f32 + 0.5) / self.buffer.height() as f32;
+        let ndc_x = (x + 0.5) / self.buffer.width() as f32;
+        let ndc_y = (y + 0.5) / self.buffer.height() as f32;
 
         // Convert the NDC coordinates to Screen coordinates.
         let screen_x = (ndc_x - 0.5) * 2.0;

@@ -52,6 +52,10 @@ To run a script `./scripts/custom-script.py`, from the root folder, call
 
 Rendered images, by default, are placed in the root folder.
 
+### Extra Feature: Supersampling
+
+For each pixel, multiple rays are cast into the scene at offsets from the center. The returned colors are averaged to get the final color of the pixel. Nine samples are taken.
+
 ### Dependencies
 
 -   [pyo3](https://github.com/PyO3/pyo3): Interacting with Rust code using Python.
@@ -60,6 +64,7 @@ Rendered images, by default, are placed in the root folder.
 -   `lazy_static`: Utility crate for creating global mutable variables with non-const initialization.
 -   `obj`: Utility crate for loading `obj` files.
 -   [maturin](https://github.com/PyO3/maturin): Building python3 module generated using `pyo3`.
+-   `rand`: Utility crate for random number generation.
 
 ### Implementation Notes
 
