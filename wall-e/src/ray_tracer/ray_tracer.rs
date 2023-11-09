@@ -83,7 +83,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             for light in self.scene.lights() {
                 sample_light += self.light_contribution_at_intersection(light, &intersection);
             }
-            // println!("({:?}) TOTAL LIGHT: {:?}", self.scene.lights().len(), total_light);
+
             total_light += sample_light;
         }
 
