@@ -1,6 +1,6 @@
 # Performance
 
-> _Note: These times were computed before anti-aliasing was implemented._
+> _Note: These times were computed before anti-aliasing and multi-threading was implemented._
 
 | Scene (256 x 256) | No Bounding Volumes | Bounding Volumes |
 | ----------------- | ------------------- | ---------------- |

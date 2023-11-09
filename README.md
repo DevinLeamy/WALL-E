@@ -72,3 +72,4 @@ For each pixel, multiple rays are cast into the scene at offsets from the center
 -   The hierarchical scene `Scene`, is converted into a `FlatScene` where the transforms are "baked", before processing.
 -   Lights are nodes and can be placed like any other kind of hierarchical node.
 -   `Collidable` is the trait implemented for all the geometry that can be collided with.
+-   The ray tracing is multi-threaded, using 12 threads.
