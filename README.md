@@ -32,9 +32,10 @@ Create a virtual environment and install `maturin`.
 
 ```bash
 cd wall-e-py
-python -m venv .env
+python -m venv .env        # or "python3 -m venv .env" on the lab computers.
 source .env/bin/activate
-pip install maturin
+pip install maturin        # or "python3 -m pip install maturin" on the lab computers.
+deactivate
 ```
 
 ### Usage
@@ -48,6 +49,16 @@ To run a script `./scripts/custom-script.py`, from the root folder, call
 ./run.sh custom-script
 # With debug output.
 ./debug.sh custom-script
+```
+
+If the above commands do not work, for whatever reason, the scripts can be executed manually by following:
+
+```bash
+cd wall-e-py
+source .env/bin/activate
+maturin develop
+cd ..
+python3 ./scripts/custom-script.py
 ```
 
 Rendered images, by default, are placed in the root folder.
