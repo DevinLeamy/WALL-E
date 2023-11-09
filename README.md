@@ -26,7 +26,7 @@
 
 Scripts, which are python3 files, are put in `/scripts`.
 
-To run a script `custom-script.py`, call
+To run a script `./scripts/custom-script.py`, call
 
 ```bash
 ./run.sh custom-script
