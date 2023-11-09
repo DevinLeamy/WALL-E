@@ -48,6 +48,8 @@ To run a script `./scripts/custom-script.py`, from the root folder, call
 ./debug.sh custom-script
 ```
 
+Rendered images, by default, are placed in the root folder.
+
 ### Dependencies
 
 -   [pyo3](https://github.com/PyO3/pyo3): Interacting with Rust code using Python.
