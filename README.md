@@ -6,7 +6,7 @@
 
 ## WALL-E
 
-> A ray-tracer named after the most noble robot out there :)
+> A ray-tracer named after one of the most noble robot out there :)
 
 <p align="center">
   <img src="./images/sample.png" width="300" height="300">
@@ -56,3 +56,10 @@ To run a script `./scripts/custom-script.py`, from the root folder, call
 -   `lazy_static`: Utility crate for creating global mutable variables with non-const initialization.
 -   `obj`: Utility crate for loading `obj` files.
 -   [maturin](https://github.com/PyO3/maturin): Building python3 module generated using `pyo3`.
+
+### Implementation Notes
+
+-   Bounding volumes are cubes that are placed around meshes.
+-   The hierarchical scene `Scene`, is converted into a `FlatScene` where the transforms are "baked", before processing.
+-   Lights are nodes and can be placed like any other kind of hierarchical node.
+-   `Collidable` is the trait implemented for all the geometry that can be collided with.
