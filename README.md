@@ -14,7 +14,9 @@
 -   `/wall-e-py`: Rust Python3 bindings, for scripting.
 -   `/wall-e-py-macros`: Rust macros used in `/wall-e-py`.
 -   `/scripts`: Scripts (scenes) you want to render.
+-   `/images`: Images from the scenes requested in the assignment guidelines.
 -   `SCRIPTING.md`: Documentation for the scripting API.
+-   `PERFORMANCE.md`: Documentation of the impact of introducing bounding volumes on meshes.
 
 ### Usage
 
