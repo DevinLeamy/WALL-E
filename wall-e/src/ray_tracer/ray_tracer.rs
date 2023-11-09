@@ -4,17 +4,26 @@ use nalgebra::Unit;
 
 use crate::prelude::*;
 
+use super::background::PatternedBackground;
+
 const DISTANCE_TO_SCREEN: f32 = 1.0;
 
 pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
     buffer: B,
     scene: FlatScene,
     camera: Camera,
+    background: PatternedBackground,
 }
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
     pub fn new(buffer: B, scene: Scene, camera: Camera) -> Self {
         Self {
+            background: PatternedBackground::new(
+                "./wall-e/assets/wall-e-5.png",
+                buffer.width(),
+                buffer.height(),
+                (buffer.width() / 3).max(30).min(60),
+            ),
             buffer,
             scene: scene.into(),
             camera,
@@ -42,16 +51,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
 
                 // Cast the primary ray into the scene to intersect with the scene's geometry.
                 let Some(intersection) = self.cast_primary_ray(ray) else {
-                    let rr = x as f32 / self.buffer.width() as f32 / 2.0;
-                    self.buffer.set(
-                        x,
-                        y,
-                        Vector3::new(
-                            rr,
-                            0.5 - rr,
-                            0.0 + 1.0 - y as f32 / self.buffer.height() as f32,
-                        ),
-                    );
+                    self.buffer.set(x, y, self.background.color(x, y));
                     continue;
                 };
 
