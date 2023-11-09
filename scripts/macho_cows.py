@@ -51,7 +51,7 @@ cow_poly = Mesh("cow.obj")
 cow_poly.set_material(hide)
 cow_poly.translate(0.0, 3.637, 0.0)
 cow_poly.scale(factor, factor, factor)
-cow_poly.translate(0.0, -1.0, 0.0)    
+cow_poly.translate(0.0, -1.0, 0.0)
 
 cow_positions = [((1, 1.3, 14), 20), ((5, 1.3, -11), 180),
                  ((-5.5, 1.3, -3), -60)]
@@ -73,8 +73,6 @@ scene = Scene()
 scene.set_root(scene_root)
 scene.set_ambient(0.4, 0.4, 0.4)
 
-# ray_trace(scene, camera, 256, 256, "image.png")
-# ray_trace(scene, camera, 900, 900, "image.png")
-ray_trace(scene, camera, 100, 100, "image.png")
+ray_trace(scene, camera, 256, 256, "image.png")
 
 copy_and_archive_image()
