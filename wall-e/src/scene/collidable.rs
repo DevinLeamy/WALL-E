@@ -3,7 +3,7 @@
 
 use crate::prelude::{Intersection, Ray};
 
-pub trait Collidable: CollidableClone + Send + std::fmt::Debug {
+pub trait Collidable: CollidableClone + Send + std::fmt::Debug + Sync {
     fn intersect(&self, ray: &Ray) -> Option<Intersection>;
 }
 

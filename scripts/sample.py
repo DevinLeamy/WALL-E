@@ -11,6 +11,7 @@ car_side = Material((0.84, 0.0, 0.00), (0.3, 0.3, 0.3), 20)
 car_wheel = Material((0.0, 0.0, 0.0), (0.3, 0.3, 0.3), 0)
 car_light = Material((8.0, 8.0, 0.6), (0.3, 0.3, 0.3), 0)
 stone = Material((0.8, 0.7, 0.7), (0.0, 0.0, 0.0), 0)
+water = Material((0.1, 0.1, 0.7), (0.9, 0.9, 0.9), 20)
 
 scene_root = Transform()
 
@@ -152,13 +153,26 @@ for position, rotation, scale in rock_positions:
     rock_instance.translate(position[0], position[1], position[2])
     scene_root.add_child(rock_instance)
 
+water_pool = Geometry('sphere')
+water_pool.translate(-18, 0, 27)
+water_pool.scale(15, 1, 15)
+water_pool.set_material(water)
+
+scene_root.add_child(water_pool)
+
+
 light_source = Light((0.8, 0.8, 0.8), (1, 0, 0))
 light_source.translate(50, 202, -130)
 
 light_source2 = Light((0.4, 0.4, 0.4), (1, 0, 0))
 light_source2.translate(-50, 202, 130)
+
+light_source3 = Light((0.8, 0.8, 0.8), (1, 0.5, 0))
+light_source3.translate(-18, 3, 20)
+
 scene_root.add_child(light_source)
 scene_root.add_child(light_source2)
+scene_root.add_child(light_source3)
 
 scene = Scene()
 scene.set_root(scene_root)
@@ -167,10 +181,10 @@ scene.set_ambient(0.2, 0.2, 0.2)
 camera = Camera((0, 30, 30), (0, 0, -1), (0, 1, 0), 80)
 camera.look_at(0, 0, 0)
 
-ray_trace(scene, camera, 500, 500, "image.png")
+# ray_trace(scene, camera, 500, 500, "image.png")
 # ray_trace(scene, camera, 256, 256, "image.png")
 # ray_trace(scene, camera, 50, 50, "image.png")
 # ray_trace(scene, camera, 100, 100, "image.png")
-# ray_trace(scene, camera, 800, 800, "image.png")
+ray_trace(scene, camera, 800, 800, "image.png")
 
 copy_and_archive_image()

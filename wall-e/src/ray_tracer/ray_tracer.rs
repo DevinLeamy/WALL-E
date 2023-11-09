@@ -1,7 +1,11 @@
-use std::time::Instant;
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+    time::Instant,
+};
 
 use nalgebra::Unit;
-use rand::{Rng, rngs::ThreadRng};
+use rand::Rng;
 
 use crate::prelude::*;
 
@@ -9,6 +13,7 @@ use super::background::PatternedBackground;
 
 const DISTANCE_TO_SCREEN: f32 = 1.0;
 const SAMPLES_PER_PIXEL: u32 = 9;
+const TOTAL_THREADS: u32 = 14;
 
 pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
     buffer: B,
@@ -17,8 +22,8 @@ pub struct RayTracer<B: Buffer<Value = Vector3<f32>>> {
     background: PatternedBackground,
     /// Number of samples per pixel.
     samples: u32,
-    /// Random number generator.
-    random: ThreadRng
+    /// Number of threads.
+    threads: u32,
 }
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
@@ -34,39 +39,66 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
             scene: scene.into(),
             camera,
             samples: SAMPLES_PER_PIXEL,
-            random: rand::thread_rng()
+            threads: TOTAL_THREADS,
         }
     }
 }
 
-impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
-    pub fn run(&mut self) -> B {
+impl<B: Buffer<Value = Vector3<f32>> + Send + Sync + 'static> RayTracer<B> {
+    pub fn run(self) -> B {
         let start_time = Instant::now();
         let total_pixels = self.buffer.width() * self.buffer.height();
-        let mut traced = 0;
+        let traced: Arc<Mutex<u32>> = Arc::new(Mutex::new(0));
 
-        for x in 0..self.buffer.width() {
-            for y in 0..self.buffer.height() {
-                traced += 1;
-                println!(
-                    "⏳ Completed {:.1}%",
-                    traced as f32 / total_pixels as f32 * 100.0
-                );
-                self.color_pixel(x, y);
-            }
+        let mut handles = vec![];
+        let width = self.buffer.width();
+        let height = self.buffer.width();
+        let buffer_arc = Arc::new(Mutex::new(self.buffer.clone()));
+        let thread_count = self.threads;
+        let self_arc = Arc::new(self);
+
+        for i in 0..thread_count {
+            let self_clone = self_arc.clone();
+            let buffer_clone = buffer_arc.clone();
+            let traced_clone = traced.clone();
+
+            let handle = thread::spawn(move || {
+                let mut pixel = i;
+                while pixel < total_pixels {
+                    let x = pixel / width;
+                    let y = pixel % height;
+                    *traced_clone.lock().unwrap() += 1;
+                    println!(
+                        "⏳ Completed {:.1}%",
+                        *traced_clone.lock().unwrap() as f32 / total_pixels as f32 * 100.0
+                    );
+                    let color = self_clone.color_pixel(x, y);
+                    buffer_clone.lock().unwrap().set(x, y, color);
+                    pixel += thread_count;
+                }
+            });
+            handles.push(handle);
         }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
         let duration = Instant::now().duration_since(start_time);
         println!("📷 Render time {:.2}s", duration.as_secs_f32());
-        self.buffer.clone()
+        let buffer = buffer_arc.lock().unwrap().clone();
+
+        buffer
     }
 }
 
 impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
-    fn color_pixel(&mut self, x: u32, y: u32) {
+    fn color_pixel(&self, x: u32, y: u32) -> Vector3<f32> {
+        let mut random = rand::thread_rng();
         let mut total_light = Vector3::zeros();
         for _ in 0..self.samples {
-            let xx = x as f32 + self.random.gen_range(0.0..=1.0) - 0.5;
-            let yy = y as f32 + self.random.gen_range(0.0..=1.0) - 0.5;
+            let xx = x as f32 + random.gen_range(0.0..=1.0) - 0.5;
+            let yy = y as f32 + random.gen_range(0.0..=1.0) - 0.5;
             let pixel_position = self.compute_pixel_position(xx, yy);
 
             let ray = Ray::from_points(self.camera.origin(), pixel_position);
@@ -88,10 +120,10 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         }
 
         let average_light = 1.0 / (self.samples as f32) * total_light;
-        self.buffer.set(x, y, average_light);
+        average_light
     }
 
-    fn cast_primary_ray(&mut self, ray: Ray) -> Option<Intersection> {
+    fn cast_primary_ray(&self, ray: Ray) -> Option<Intersection> {
         let mut nearest: Option<Intersection> = None;
 
         for geometry in self.scene.geometry() {
@@ -140,7 +172,7 @@ impl<B: Buffer<Value = Vector3<f32>>> RayTracer<B> {
         )
     }
 
-    fn compute_pixel_position(&mut self, x: f32, y: f32) -> Vector3<f32> {
+    fn compute_pixel_position(&self, x: f32, y: f32) -> Vector3<f32> {
         let d = DISTANCE_TO_SCREEN;
 
         // Convert the pixel coordinates to NDC coordinates.
