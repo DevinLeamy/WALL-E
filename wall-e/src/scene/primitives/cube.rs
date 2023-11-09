@@ -10,22 +10,27 @@ use crate::{
 
 #[derive(Clone, Debug)]
 pub struct Cube {
-    size: f32,
+    min: Vector3<f32>,
+    max: Vector3<f32>,
 }
 
 impl Cube {
     /// Create a cube with a given side length.
     pub fn new(size: f32) -> Self {
-        Self { size }
+        Self {
+            min: Vector3::zeros(),
+            max: Vector3::new(size, size, size),
+        }
+    }
+
+    pub fn from_points(min: Vector3<f32>, max: Vector3<f32>) -> Self {
+        Self { min, max }
     }
 }
 
 impl Cube {
     fn is_inside(&self, point: &Vector3<f32>) -> bool {
-        let min = Vector3::zeros();
-        let max = Vector3::new(self.size, self.size, self.size);
-
-        point.ge(&min).all() && point.le(&max).all()
+        point.ge(&self.min).all() && point.le(&self.max).all()
     }
 }
 
@@ -36,14 +41,14 @@ impl Collidable for Cube {
             return None;
         }
 
-        let mut tmin = -origin.x / direction.x;
-        let mut tmax = (self.size - origin.x) / direction.x;
+        let mut tmin = (self.min.x - origin.x) / direction.x;
+        let mut tmax = (self.max.x - origin.x) / direction.x;
         if tmin > tmax {
             swap(&mut tmin, &mut tmax);
         }
 
-        let mut tmin_y = -origin.y / direction.y;
-        let mut tmax_y = (self.size - origin.y) / direction.y;
+        let mut tmin_y = (self.min.y - origin.y) / direction.y;
+        let mut tmax_y = (self.max.y - origin.y) / direction.y;
         if tmin_y > tmax_y {
             swap(&mut tmin_y, &mut tmax_y);
         }
@@ -55,8 +60,8 @@ impl Collidable for Cube {
         tmin = f32::max(tmin, tmin_y);
         tmax = f32::min(tmax, tmax_y);
 
-        let mut tmin_z = -origin.z / direction.z;
-        let mut tmax_z = (self.size - origin.z) / direction.z;
+        let mut tmin_z = (self.min.z - origin.z) / direction.z;
+        let mut tmax_z = (self.max.z - origin.z) / direction.z;
         if tmin_z > tmax_z {
             swap(&mut tmin_z, &mut tmax_z);
         }

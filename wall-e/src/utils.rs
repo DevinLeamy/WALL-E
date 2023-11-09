@@ -18,16 +18,14 @@ pub fn vector_mul(a: &Vector3<f32>, b: &Vector3<f32>) -> Vector3<f32> {
     Vector3::new(a.x * b.x, a.y * b.y, a.z * b.z)
 }
 
-pub fn vector_reciprocal(mut v: Vector3<f32>) -> Vector3<f32> {
-    if v.x == 0.0 {
-        v.x = 1.0;
-    }
-    if v.y == 0.0 {
-        v.y = 1.0;
-    }
-    if v.z == 0.0 {
-        v.z = 1.0;
-    }
+pub fn vector_min_mut(a: &mut Vector3<f32>, b: &Vector3<f32>) {
+    a.x = a.x.min(b.x);
+    a.y = a.y.min(b.y);
+    a.z = a.z.min(b.z);
+}
 
-    Vector3::new(1.0 / v.x, 1.0 / v.y, 1.0 / v.z)
+pub fn vector_max_mut(a: &mut Vector3<f32>, b: &Vector3<f32>) {
+    a.x = a.x.max(b.x);
+    a.y = a.y.max(b.y);
+    a.z = a.z.max(b.z);
 }
