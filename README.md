@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="./images/sample.png" width="300" height="300">
-    <p><i><u>sample.py</u>: Two cars surrounded by trees and piles of leaves, in front of a set of large boulders.</i></p>
+    <p><i><u>sample.py</u>: Two cars surrounded by trees and piles of leaves, in front of a set of large boulders. There's a small and sparkling pond. </i></p>
 </p>
 
 ### Structure
