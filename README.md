@@ -16,6 +16,7 @@
 
 -   `/wall-e`: The Rust ray-tracing library.
 -   `/wall-e-py`: Rust Python3 bindings, for scripting.
+-   `/wall-e-py/assets/meshes`: Contains `.obj` mesh files.
 -   `/wall-e-py-macros`: Rust macros used in `/wall-e-py`.
 -   `/scripts`: Scripts (scenes) you want to render.
 -   `/images`: Images from the scenes requested in the assignment guidelines.

@@ -24,6 +24,9 @@ Scene nodes can be rotated, scaled, translated, and have any number of children.
     -   `(s0, s1, s2)`: Specular parameters.
 -   `Geometry(primitive)`: Construct a geometric primitive. I.e. "sphere" or "cube"
 -   `Geometry::set_material(material)`: Set the material of the primitive.
+-   `Mesh(obj_file)`: Construct a mesh from an object file.
+    -   e.g. `Mesh("buckyball.obj")` loads `/wall-e-py/assets/meshes/buckyball.obj`.
+-   `Mesh::set_material(material)`: Set the material of the mesh.
 -   `Light((i0, i1, i2), (c0, c1, c2))`: Create a new light.
     -   `(i0, i1, i2)`: RGB intensity parameters.
     -   `(c0, c1, c2)`: Attenuation parameters.
