@@ -12,7 +12,7 @@ as the original Lua scripting API.
 
 `Light`, `Geometry`, `Mesh`, and `Transform` are types of scene nodes. `Transform` is the type
 of the root node in all scenes scripts, but they don't have to be.
-Scene nodes can be rotated, scale, translated, and have any number of children.
+Scene nodes can be rotated, scaled, translated, and have any number of children.
 
 -   `Node::rotate(axis, degree)`: Rotate the node around a given axis, "x", "y", or "z".
 -   `Node::translate(x, y, z)`: Translate the node.

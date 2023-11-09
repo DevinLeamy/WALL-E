@@ -8,6 +8,10 @@
 
 > A ray-tracer named after the most noble robot out there :)
 
+<p align="center">
+  <img src="./images/sample.png" width="300" height="300">
+</p>
+
 ### Structure
 
 -   `/wall-e`: The Rust ray-tracing library.
