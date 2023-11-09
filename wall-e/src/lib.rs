@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
 
+mod config;
 mod obj_loader;
 mod obj_mesh;
 mod output;
@@ -13,4 +14,5 @@ pub mod prelude {
     pub use crate::ray_tracer::*;
     pub use crate::scene::*;
     pub use nalgebra::Vector3;
+    pub use crate::config::*;
 }

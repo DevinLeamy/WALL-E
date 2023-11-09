@@ -72,6 +72,8 @@ camera = Camera((0, 2, 30), (0, 0, -1), (0, 1, 0), 50)
 scene = Scene()
 scene.set_root(scene_root)
 scene.set_ambient(0.4, 0.4, 0.4)
+# Uncomment to render bounding volumes.
+# scene.render_bounding_volumes()
 
 ray_trace(scene, camera, 256, 256, "image.png")
 

@@ -56,6 +56,11 @@ impl PyScene {
     fn set_ambient(&mut self, r: f32, g: f32, b: f32) {
         self.inner.set_ambient(Vector3::new(r, g, b))
     }
+
+    /// If invoked, bounding volumes will be drawn for subsequent renders.
+    fn render_bounding_volumes(&mut self) {
+        *wall_e::prelude::RENDER_BOUNDING_VOLUMES.lock().unwrap() = true;
+    }
 }
 
 #[pyfunction]

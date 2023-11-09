@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use super::Collidable;
 use crate::{
+    config,
     obj_loader::ObjLoader,
     prelude::*,
     utils::{vector_max_mut, vector_min_mut},
@@ -45,9 +46,13 @@ impl Mesh {
 
 impl Collidable for Mesh {
     fn intersect(&self, ray: &Ray) -> Option<Intersection> {
+        if *config::RENDER_BOUNDING_VOLUMES.lock().unwrap() {
+            return self.bounding_cube.intersect(ray);
+        }
+
         if self.bounding_cube.intersect(ray).is_none() {
             return None;
-        } 
+        }
 
         let mut intersection: Option<Intersection> = None;
         for triangle in &self.triangles {
