@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 mod obj_loader;
 mod obj_mesh;
 mod output;
