@@ -32,7 +32,7 @@ Create a virtual environment and install `maturin`.
 
 ```bash
 cd wall-e-py
-python -m venv .env        # or "python3 -m venv .env" on the lab computers.
+python3 -m venv .env
 source .env/bin/activate
 pip install maturin        # or "python3 -m pip install maturin" on the lab computers.
 deactivate
