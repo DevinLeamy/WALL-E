@@ -5,10 +5,12 @@ import random
 wood = Material((0.8, 0.7, 0.7), (0.0, 0.0, 0.0), 0)
 leaves = Material((0.8, 0.3, 0.3), (0.0, 0.0, 0.0), 0)
 leaves2 = Material((0.8, 0.5, 0.5), (0.0, 0.0, 0.0), 0)
-grass = Material((0.1, 0.7, 0.1), (0.0, 0.0, 0.0), 0)
+grass = Material((0.1, 0.4, 0.1), (0.0, 0.0, 0.0), 0)
 tree_leaves = Material((0.4, 0.7, 0.4), (0.0, 0.0, 0.0), 0)
-car_side = Material((0.84, 0.9, 0.53), (0.3, 0.3, 0.3), 20)
-car_wheel = Material((0.84, 0.6, 0.53), (0.3, 0.3, 0.3), 20)
+car_side = Material((0.84, 0.0, 0.00), (0.3, 0.3, 0.3), 20)
+car_wheel = Material((0.0, 0.0, 0.0), (0.3, 0.3, 0.3), 0)
+car_light = Material((8.0, 8.0, 0.6), (0.3, 0.3, 0.3), 0)
+stone = Material((0.8, 0.7, 0.7), (0.0, 0.0, 0.0), 0)
 
 scene_root = Transform()
 
@@ -20,14 +22,22 @@ scene_root.add_child(plane)
 
 def create_car():
     tree = Transform()
-    h = 6.0
+    h = 2
+    s = 1.5
+    l = 0.8
     parts = [
-        # Trunk
-        ("cube", (0, 0, 0), (1.5, h, 1.5), wood),
-        # Leaves
-        ("sphere", (1.0, h + 0.3, 1), (2.0, 2.0, 2.0), tree_leaves),
-        ("sphere", (1.0, h + 1.7, 1), (1.8, 1.8, 1.8), tree_leaves),
-        ("sphere", (1.4, h + 2.4, 1), (1.6, 1.6, 1.6), tree_leaves),
+        # Body
+        ("cube", (0, 2, 0), (11.0, 2, 5.0), car_side),
+        ("cube", (0, 4, 1.5), (7.0, 4, 2.5), car_side),
+        ("cube", (10, 4, 1.5), (0.5, 3, 2.5), car_wheel),
+        # Wheels 
+        ("sphere", (13.0, 0, 0.0), (s, s, s), car_wheel),
+        ("sphere", (13.0, 0, 7.0), (s, s, s), car_wheel),
+        ("sphere", (2, 0, 0.0), (s, s, s), car_wheel),
+        ("sphere", (2, 0, 7.0), (s, s, s), car_wheel),
+        # lights
+        ("sphere", (15, 4, 2.0), (l, l, l), car_light),
+        ("sphere", (15, 4, 5.0), (l, l, l), car_light),
     ]
     for geometry, position, scale, material in parts:
         part = Geometry(geometry)
@@ -62,7 +72,7 @@ def create_tree():
 
 def create_leaves():
     n_leaves = Transform()
-    h = -0.5
+    h = -0.7
     parts = [
         # Leaves
         ("sphere", (-0.2, h, -0.2), (1.0, 1.0, 1.0), leaves),
@@ -79,7 +89,7 @@ def create_leaves():
     return n_leaves
 
 
-x = [-30, 30]
+x = [-40, 40]
 z = [20, -40]
 
 random.seed(41)
@@ -115,6 +125,33 @@ for position, rotation in leaves_positions:
     leaves_instance.translate(position[0], position[1], position[2])
     scene_root.add_child(leaves_instance)
 
+car_positions = [
+    ((0, 0, 8), -60),
+    ((-20, 0, -20), 30),
+]
+
+for position, rotation in car_positions:
+    car_instance = Transform()
+    car_instance.add_child(create_car())
+    car_instance.scale(1.4, 1.4, 1.4)
+    car_instance.rotate('Y', rotation)
+    car_instance.translate(position[0], position[1], position[2])
+    scene_root.add_child(car_instance)
+
+rock_positions = [
+    ((-40, -10, -60), 30, 12),
+    ((35, -10, -60), 60, 14),
+    ((10, -15, -80), 40, 18),
+]
+
+for position, rotation, scale in rock_positions:
+    rock_instance = Mesh('buckyball.obj')
+    rock_instance.set_material(stone)
+    rock_instance.scale(scale, scale, scale)
+    rock_instance.rotate('Y', rotation)
+    rock_instance.translate(position[0], position[1], position[2])
+    scene_root.add_child(rock_instance)
+
 light_source = Light((0.8, 0.8, 0.8), (1, 0, 0))
 light_source.translate(50, 202, -130)
 
@@ -130,6 +167,7 @@ scene.set_ambient(0.2, 0.2, 0.2)
 camera = Camera((0, 30, 30), (0, 0, -1), (0, 1, 0), 80)
 camera.look_at(0, 0, 0)
 # ray_trace(scene, camera, 50, 50, "image.png")
-ray_trace(scene, camera, 100, 100, "image.png")
+# ray_trace(scene, camera, 100, 100, "image.png")
+ray_trace(scene, camera, 800, 800, "image.png")
 
 copy_and_archive_image()
