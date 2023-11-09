@@ -55,14 +55,13 @@ magenta_light = Light((0.7, 0, 0.7), (1, 0, 0))
 magenta_light.translate(400.0, 100.0, 150.0)
 
 scene_root.add_child(white_light)
-# scene_root.add_child(magenta_light)
+scene_root.add_child(magenta_light)
 camera = Camera((0, 0, 800), (0, 0, -1), (0, 1, 0), 50)
 
 scene = Scene()
 scene.set_root(scene_root)
 scene.set_ambient(0.3, 0.3, 0.3)
 
-# ray_trace(scene, camera, 100, 100, "image.png")
 ray_trace(scene, camera, 256, 256, "image.png")
 # ray_trace(scene, camera, 600, 600, "image.png")
 

@@ -47,7 +47,7 @@ impl Collidable for Mesh {
     fn intersect(&self, ray: &Ray) -> Option<Intersection> {
         if self.bounding_cube.intersect(ray).is_none() {
             return None;
-        }
+        } 
 
         let mut intersection: Option<Intersection> = None;
         for triangle in &self.triangles {
