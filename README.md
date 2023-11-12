@@ -16,7 +16,6 @@
 -   `/scripts`: Scripts (scenes) you want to render.
 -   `/images`: Images from the scenes requested in the assignment guidelines.
 -   `SCRIPTING.md`: Documentation for the scripting API.
--   `PERFORMANCE.md`: Documentation of the impact of introducing bounding volumes on meshes.
 
 ### Setup
 
