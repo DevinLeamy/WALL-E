@@ -1,12 +1,6 @@
-# CS488 - A4: Ray Tracer
+# WALL-E
 
--   Name: Devin Leamy
--   UW ID: 20872933
--   UW User ID: dleamy
-
-## WALL-E
-
-> A ray-tracer named after one of the most noble robot out there :)
+> A ray-tracer named after one of the most noble robots out there :)
 
 <p align="center">
   <img src="./images/sample.png" width="300" height="300">
@@ -34,7 +28,7 @@ Create a virtual environment and install `maturin`.
 cd wall-e-py
 python3 -m venv .env
 source .env/bin/activate
-pip install maturin        # or "python3 -m pip install maturin" on the lab computers.
+pip install maturin
 deactivate
 ```
 
@@ -51,7 +45,7 @@ To run a script `./scripts/custom-script.py`, from the root folder, call
 ./debug.sh custom-script
 ```
 
-If the above commands do not work, for whatever reason, the scripts can be executed manually by following:
+Or, alternatively:
 
 ```bash
 cd wall-e-py
@@ -63,10 +57,6 @@ python3 ./scripts/custom-script.py
 
 Rendered images, by default, are placed in the root folder.
 
-### Extra Feature: Supersampling
-
-For each pixel, multiple rays are cast into the scene at offsets from the center. The returned colors are averaged to get the final color of the pixel. Nine samples are taken.
-
 ### Dependencies
 
 -   [pyo3](https://github.com/PyO3/pyo3): Interacting with Rust code using Python.
@@ -76,11 +66,3 @@ For each pixel, multiple rays are cast into the scene at offsets from the center
 -   `obj`: Utility crate for loading `obj` files.
 -   [maturin](https://github.com/PyO3/maturin): Building python3 module generated using `pyo3`.
 -   `rand`: Utility crate for random number generation.
-
-### Implementation Notes
-
--   Bounding volumes are cubes that are placed around meshes.
--   The hierarchical scene `Scene`, is converted into a `FlatScene` where the transforms are "baked", before processing.
--   Lights are nodes and can be placed like any other kind of hierarchical node.
--   `Collidable` is the trait implemented for all the geometry that can be collided with.
--   The ray tracing is multi-threaded, using 12 threads.
